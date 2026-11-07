@@ -4,280 +4,1084 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Bar Register</title>
+
 <style>
-:root{font-family:Arial,Helvetica,sans-serif;color:#202536;background:#f3f4fa}
-*{box-sizing:border-box}body{margin:0;padding:24px 15px 50px}
-button,input{font:inherit}button{cursor:pointer;border:0;border-radius:10px;padding:12px 15px;font-weight:700;background:#6558d3;color:white}
-button:hover:not(:disabled){background:#5145bd}button:disabled{opacity:.45;cursor:not-allowed}
-.wrap{max-width:900px;margin:auto}.panel{background:white;border:1px solid #e5e7ef;border-radius:17px;padding:22px;box-shadow:0 7px 22px #2025360b}
-h1{margin:0 0 8px;font-size:30px}h2{margin:0 0 16px;font-size:21px}.muted{color:#707789}.hidden{display:none!important}
-.login{max-width:410px;margin:8vh auto}.field{display:grid;gap:7px;margin:15px 0}.field input,.select{width:100%;padding:12px;border:1px solid #d9dce7;border-radius:9px;background:white;color:#202536}
-.message{min-height:22px;margin-top:12px;color:#bd4141}.header{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px;flex-wrap:wrap}
-.balance{font-size:30px;font-weight:800;margin:5px 0 16px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:13px;margin-top:14px}
-.item{border:1px solid #e6e8f0;border-radius:13px;padding:16px}.item .emoji{font-size:26px;margin-bottom:9px}.item h3{margin:0 0 7px}.item p{color:#707789;margin:0 0 13px}
-.customer-card{border:1px solid #e6e8f0;border-radius:13px;padding:16px}.customer-card h3{margin:0 0 7px}.customer-card .balance{font-size:24px}
-.notice{padding:13px 15px;border-radius:10px;background:#f2f0ff;color:#5145bd;margin-top:15px;min-height:45px}
-.notice.error{background:#fff1f1;color:#b53c3c}.notice.success{background:#effaf4;color:#16865d}
-.shift{display:flex;align-items:center;gap:10px;margin-top:10px;color:#596174}.dot{width:10px;height:10px;border-radius:50%;background:#a0a5b1}.dot.on{background:#20a875}
-.modal-backdrop{position:fixed;inset:0;background:#151827a8;display:grid;place-items:center;padding:18px;z-index:5}
-.modal{width:min(420px,100%);background:white;border-radius:18px;padding:25px;text-align:center;box-shadow:0 20px 70px #0003}
-.stars{display:flex;justify-content:center;gap:8px;margin:20px 0}.star{background:#eceafc;color:#5145bd;font-size:25px;padding:9px 12px}.star.selected{background:#6558d3;color:white}
-.small{font-size:13px}.ratings{margin-top:22px}.rating-row{padding:10px 0;border-bottom:1px solid #eceef3;display:flex;justify-content:space-between;gap:12px}
-@media(max-width:520px){body{padding:15px 12px 35px}.panel{padding:18px}h1{font-size:26px}}
+:root {
+  font-family: Arial, Helvetica, sans-serif;
+  color: #202536;
+  background: #f3f4fa;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 24px 15px 50px;
+}
+
+button, input {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+  border: 0;
+  border-radius: 10px;
+  padding: 12px 15px;
+  font-weight: 700;
+  background: #6558d3;
+  color: white;
+}
+
+button:hover:not(:disabled) {
+  background: #5145bd;
+}
+
+button:disabled {
+  opacity: .45;
+  cursor: not-allowed;
+}
+
+.wrap {
+  max-width: 900px;
+  margin: auto;
+}
+
+.panel {
+  background: white;
+  border: 1px solid #e5e7ef;
+  border-radius: 17px;
+  padding: 22px;
+  box-shadow: 0 7px 22px #2025360b;
+}
+
+h1 {
+  margin: 0 0 8px;
+  font-size: 30px;
+}
+
+h2 {
+  margin: 0 0 16px;
+  font-size: 21px;
+}
+
+.muted {
+  color: #707789;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.login {
+  max-width: 410px;
+  margin: 8vh auto;
+}
+
+.field {
+  display: grid;
+  gap: 7px;
+  margin: 15px 0;
+}
+
+.field input,
+.select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #d9dce7;
+  border-radius: 9px;
+  background: white;
+  color: #202536;
+}
+
+.message {
+  min-height: 22px;
+  margin-top: 12px;
+  color: #bd4141;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+}
+
+.balance {
+  font-size: 30px;
+  font-weight: 800;
+  margin: 5px 0 16px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 13px;
+  margin-top: 14px;
+}
+
+.item {
+  border: 1px solid #e6e8f0;
+  border-radius: 13px;
+  padding: 16px;
+}
+
+.item .emoji {
+  font-size: 26px;
+  margin-bottom: 9px;
+}
+
+.item h3 {
+  margin: 0 0 7px;
+}
+
+.item p {
+  color: #707789;
+  margin: 0 0 13px;
+}
+
+.customer-card {
+  border: 1px solid #e6e8f0;
+  border-radius: 13px;
+  padding: 16px;
+}
+
+.customer-card h3 {
+  margin: 0 0 7px;
+}
+
+.customer-card .balance {
+  font-size: 24px;
+}
+
+.notice {
+  padding: 13px 15px;
+  border-radius: 10px;
+  background: #f2f0ff;
+  color: #5145bd;
+  margin-top: 15px;
+  min-height: 45px;
+}
+
+.notice.error {
+  background: #fff1f1;
+  color: #b53c3c;
+}
+
+.notice.success {
+  background: #effaf4;
+  color: #16865d;
+}
+
+.shift {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+  color: #596174;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #a0a5b1;
+}
+
+.dot.on {
+  background: #20a875;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: #151827a8;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  z-index: 5;
+}
+
+.modal {
+  width: min(420px, 100%);
+  background: white;
+  border-radius: 18px;
+  padding: 25px;
+  text-align: center;
+  box-shadow: 0 20px 70px #0003;
+}
+
+.stars {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin: 20px 0;
+}
+
+.star {
+  background: #eceafc;
+  color: #5145bd;
+  font-size: 25px;
+  padding: 9px 12px;
+}
+
+.star.selected {
+  background: #6558d3;
+  color: white;
+}
+
+.small {
+  font-size: 13px;
+}
+
+.ratings {
+  margin-top: 22px;
+}
+
+.rating-row {
+  padding: 10px 0;
+  border-bottom: 1px solid #eceef3;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+@media(max-width:520px) {
+  body {
+    padding: 15px 12px 35px;
+  }
+
+  .panel {
+    padding: 18px;
+  }
+
+  h1 {
+    font-size: 26px;
+  }
+}
 </style>
 </head>
+
 <body>
+
 <div class="wrap">
+
+  <!-- LOGIN -->
+
   <section id="loginView" class="panel login">
+
     <h1>Welcome</h1>
-    <p class="muted">Sign in to your register account.</p>
+
+    <p class="muted">
+      Sign in to your register account.
+    </p>
+
     <form id="loginForm">
-      <label class="field">Username<input id="username" autocomplete="username" required placeholder="Your username"></label>
-      <label class="field">Password<input id="password" type="password" autocomplete="current-password" required placeholder="Your password"></label>
-      <button type="submit" style="width:100%">Log In</button>
+
+      <label class="field">
+        Username
+        <input
+          id="username"
+          autocomplete="username"
+          required
+          placeholder="Your username"
+        >
+      </label>
+
+      <label class="field">
+        Password
+        <input
+          id="password"
+          type="password"
+          autocomplete="current-password"
+          required
+          placeholder="Your password"
+        >
+      </label>
+
+      <button type="submit" style="width:100%">
+        Log In
+      </button>
+
     </form>
-    <div id="loginMessage" class="message" role="alert"></div>
+
+    <div
+      id="loginMessage"
+      class="message"
+      role="alert"
+    ></div>
+
   </section>
+
+  <!-- APPLICATION -->
 
   <section id="appView" class="hidden">
+
     <div class="header">
-      <div><h1>Bar Register</h1><div id="welcome" class="muted"></div></div>
-      <button id="logoutButton">Log Out</button>
+
+      <div>
+        <h1>Bar Register</h1>
+        <div id="welcome" class="muted"></div>
+      </div>
+
+      <button id="logoutButton">
+        Log Out
+      </button>
+
     </div>
+
+    <!-- CUSTOMER DASHBOARD -->
 
     <section id="customerView" class="panel hidden">
+
       <h2>Your account</h2>
-      <div id="customerBalance" class="balance">$100.00</div>
-      <div id="customerShift" class="shift"><span class="dot"></span><span>Off shift</span></div>
-      <button id="shiftButton" style="margin-top:17px">Go On Shift</button>
-      <div class="notice">Ask the bartender to ring up your items. Purchases will be taken from this balance.</div>
-      <p class="muted small">You earn $5.00 per minute while on shift. Purchases are disabled while you are on shift.</p>
+
+      <div id="customerBalance" class="balance">
+        $100.00
+      </div>
+
+      <div id="customerShift" class="shift">
+        <span class="dot"></span>
+        <span>Off shift</span>
+      </div>
+
+      <button
+        id="shiftButton"
+        style="margin-top:17px"
+      >
+        Go On Shift
+      </button>
+
+      <div class="notice">
+        Ask the bartender to ring up your items.
+        Purchases will be taken from this balance.
+      </div>
+
+      <p class="muted small">
+        You earn $5.00 per minute while on shift.
+        Purchases are disabled while you are on shift.
+      </p>
+
     </section>
+
+    <!-- BARTENDER DASHBOARD -->
 
     <section id="bartenderView" class="panel hidden">
+
       <h2>Bartender register</h2>
-      <p class="muted">Choose a customer, then tap an item to charge their account and send them a rating request.</p>
-      <label class="field">Customer account
+
+      <p class="muted">
+        Choose a customer, then tap an item to charge
+        their account and send them a rating request.
+      </p>
+
+      <label class="field">
+
+        Customer account
+
         <select id="customerSelect" class="select">
-          <option value="owen448">Owen448</option>
-          <option value="colton448">Colton448</option>
+
+          <option value="owen448">
+            Owen448
+          </option>
+
+          <option value="colton448">
+            Colton448
+          </option>
+
         </select>
+
       </label>
+
       <div id="customerCards" class="grid"></div>
-      <h2 style="margin-top:25px">Menu — tap to charge</h2>
+
+      <h2 style="margin-top:25px">
+        Menu — tap to charge
+      </h2>
+
       <div id="productGrid" class="grid"></div>
-      <div id="bartenderNotice" class="notice" role="status">Ready to take an order.</div>
-      <div class="ratings">
-        <h2>Customer ratings</h2>
-        <div id="ratingsList" class="muted small">No ratings yet.</div>
+
+      <div
+        id="bartenderNotice"
+        class="notice"
+        role="status"
+      >
+        Ready to take an order.
       </div>
+
+      <div class="ratings">
+
+        <h2>Customer ratings</h2>
+
+        <div id="ratingsList" class="muted small">
+          No ratings yet.
+        </div>
+
+      </div>
+
     </section>
+
   </section>
+
 </div>
 
-<div id="ratingModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="ratingTitle">
+<!-- RATING MODAL -->
+
+<div
+  id="ratingModal"
+  class="modal-backdrop hidden"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="ratingTitle"
+>
+
   <div class="modal">
-    <h2 id="ratingTitle">Rate your bartender</h2>
-    <p id="ratingDescription" class="muted">How was your service?</p>
+
+    <h2 id="ratingTitle">
+      Rate your bartender
+    </h2>
+
+    <p id="ratingDescription" class="muted">
+      How was your service?
+    </p>
+
     <div id="starButtons" class="stars">
-      <button class="star" data-rating="1" aria-label="1 star">★</button>
-      <button class="star" data-rating="2" aria-label="2 stars">★</button>
-      <button class="star" data-rating="3" aria-label="3 stars">★</button>
-      <button class="star" data-rating="4" aria-label="4 stars">★</button>
-      <button class="star" data-rating="5" aria-label="5 stars">★</button>
+
+      <button class="star" data-rating="1" aria-label="1 star">
+        ★
+      </button>
+
+      <button class="star" data-rating="2" aria-label="2 stars">
+        ★
+      </button>
+
+      <button class="star" data-rating="3" aria-label="3 stars">
+        ★
+      </button>
+
+      <button class="star" data-rating="4" aria-label="4 stars">
+        ★
+      </button>
+
+      <button class="star" data-rating="5" aria-label="5 stars">
+        ★
+      </button>
+
     </div>
+
     <div id="ratingMessage" class="message"></div>
+
   </div>
+
 </div>
 
 <script>
+
 const $ = id => document.getElementById(id);
+
 let currentUser = null;
 let customerPoll = null;
 let dashboardPoll = null;
 let activeRatingId = null;
-const money = cents => "$" + (cents / 100).toFixed(2);
+
+const money = cents =>
+  "$" + (cents / 100).toFixed(2);
+
+// ======================================================
+// API HELPER
+// ======================================================
 
 async function api(url, options = {}) {
-  const response = await fetch(url, {
-    ...options,
-    headers: { "Content-Type": "application/json", ...(options.headers || {}) }
-  });
-  const body = await response.json().catch(() => ({}));
-  if (!response.ok) throw new Error(body.error || "Something went wrong.");
+
+  let response;
+
+  try {
+
+    response = await fetch(url, {
+      ...options,
+      cache: "no-store",
+      credentials: "same-origin",
+
+      headers: {
+        "Content-Type": "application/json",
+        ...(options.headers || {})
+      }
+    });
+
+  } catch (error) {
+
+    throw new Error(
+      "Cannot reach the server. Check your connection and try again."
+    );
+
+  }
+
+  const contentType =
+    response.headers.get("content-type") || "";
+
+  let body = {};
+
+  if (contentType.includes("application/json")) {
+
+    body = await response.json().catch(() => ({}));
+
+  } else {
+
+    const text = await response.text().catch(() => "");
+
+    if (text) {
+      body.error = text.slice(0, 250);
+    }
+
+  }
+
+  if (!response.ok) {
+
+    throw new Error(
+      body.error || `Server error (${response.status}).`
+    );
+
+  }
+
   return body;
 }
 
+// ======================================================
+// MESSAGE HELPER
+// ======================================================
+
 function showMessage(element, message, type = "") {
+
   element.textContent = message;
-  element.className = "notice" + (type ? " " + type : "");
+
+  element.className =
+    "notice" + (type ? " " + type : "");
+
 }
+
+// ======================================================
+// STOP POLLING
+// ======================================================
 
 function stopPolling() {
-  if (customerPoll) clearInterval(customerPoll);
-  if (dashboardPoll) clearInterval(dashboardPoll);
-  customerPoll = dashboardPoll = null;
+
+  if (customerPoll) {
+    clearInterval(customerPoll);
+  }
+
+  if (dashboardPoll) {
+    clearInterval(dashboardPoll);
+  }
+
+  customerPoll = null;
+  dashboardPoll = null;
+
 }
 
+// ======================================================
+// SHOW LOGGED IN USER
+// ======================================================
+
 function showLoggedIn(user) {
+
   currentUser = user;
+
   $("loginView").classList.add("hidden");
   $("appView").classList.remove("hidden");
-  $("welcome").textContent = user.username + (user.role === "bartender" ? " · Bartender" : " · Customer");
-  $("customerView").classList.toggle("hidden", user.role !== "customer");
-  $("bartenderView").classList.toggle("hidden", user.role !== "bartender");
+
+  $("welcome").textContent =
+    user.username +
+    (user.role === "bartender"
+      ? " · Bartender"
+      : " · Customer");
+
+  $("customerView").classList.toggle(
+    "hidden",
+    user.role !== "customer"
+  );
+
+  $("bartenderView").classList.toggle(
+    "hidden",
+    user.role !== "bartender"
+  );
+
   stopPolling();
 
   if (user.role === "customer") {
+
     refreshCustomer();
     checkPendingRatings();
+
     customerPoll = setInterval(() => {
+
       refreshCustomer();
       checkPendingRatings();
+
     }, 3000);
+
   } else {
+
     refreshDashboard();
-    dashboardPoll = setInterval(refreshDashboard, 3000);
+
+    dashboardPoll = setInterval(
+      refreshDashboard,
+      3000
+    );
+
   }
+
 }
+
+// ======================================================
+// CUSTOMER BALANCE
+// ======================================================
 
 async function refreshCustomer() {
+
   try {
-    const { customer } = await api("/api/customer/state");
-    $("customerBalance").textContent = money(customer.balanceCents);
-    $("shiftButton").textContent = customer.onShift ? "Go Off Shift" : "Go On Shift";
-    $("customerShift").innerHTML = `<span class="dot ${customer.onShift ? "on" : ""}"></span><span>${customer.onShift ? "On shift — earning $5.00 per minute. Purchases are disabled." : "Off shift — you can make purchases."}</span>`;
+
+    const { customer } =
+      await api("/api/customer/state");
+
+    $("customerBalance").textContent =
+      money(customer.balanceCents);
+
+    $("shiftButton").textContent =
+      customer.onShift
+        ? "Go Off Shift"
+        : "Go On Shift";
+
+    $("customerShift").innerHTML = `
+      <span class="dot ${customer.onShift ? "on" : ""}"></span>
+
+      <span>
+        ${
+          customer.onShift
+            ? "On shift — earning $5.00 per minute. Purchases are disabled."
+            : "Off shift — you can make purchases."
+        }
+      </span>
+    `;
+
   } catch (error) {
+
     console.error(error);
+
   }
+
 }
+
+// ======================================================
+// PENDING RATINGS
+// ======================================================
 
 async function checkPendingRatings() {
+
   if (activeRatingId !== null) return;
+
   try {
-    const { ratings } = await api("/api/customer/ratings/pending");
+
+    const { ratings } =
+      await api("/api/customer/ratings/pending");
+
     if (!ratings.length) return;
+
     const rating = ratings[0];
+
     activeRatingId = rating.id;
-    $("ratingDescription").textContent = `You just bought ${rating.itemName}. How was your service from the bartender?`;
+
+    $("ratingDescription").textContent =
+      `You just bought ${rating.itemName}. How was your service from the bartender?`;
+
     $("ratingMessage").textContent = "";
-    $("starButtons").querySelectorAll("button").forEach(button => button.classList.remove("selected"));
+
+    $("starButtons")
+      .querySelectorAll("button")
+      .forEach(button => {
+        button.classList.remove("selected");
+      });
+
     $("ratingModal").classList.remove("hidden");
+
   } catch (error) {
+
     console.error(error);
+
   }
+
 }
 
-$("starButtons").addEventListener("click", async event => {
-  const button = event.target.closest("button[data-rating]");
-  if (!button || activeRatingId === null) return;
-  const rating = Number(button.dataset.rating);
-  $("starButtons").querySelectorAll("button").forEach(star => {
-    star.classList.toggle("selected", Number(star.dataset.rating) <= rating);
-  });
-  try {
-    await api(`/api/customer/ratings/${activeRatingId}`, {
-      method: "POST", body: JSON.stringify({ rating })
-    });
-    $("ratingModal").classList.add("hidden");
-    activeRatingId = null;
-    await checkPendingRatings();
-  } catch (error) {
-    $("ratingMessage").textContent = error.message;
+// ======================================================
+// SUBMIT RATING
+// ======================================================
+
+$("starButtons").addEventListener(
+  "click",
+  async event => {
+
+    const button =
+      event.target.closest("button[data-rating]");
+
+    if (!button || activeRatingId === null) return;
+
+    const rating = Number(button.dataset.rating);
+
+    $("starButtons")
+      .querySelectorAll("button")
+      .forEach(star => {
+
+        star.classList.toggle(
+          "selected",
+          Number(star.dataset.rating) <= rating
+        );
+
+      });
+
+    try {
+
+      await api(
+        `/api/customer/ratings/${activeRatingId}`,
+        {
+          method: "POST",
+          body: JSON.stringify({ rating })
+        }
+      );
+
+      $("ratingModal").classList.add("hidden");
+
+      activeRatingId = null;
+
+      await checkPendingRatings();
+
+    } catch (error) {
+
+      $("ratingMessage").textContent =
+        error.message;
+
+    }
+
   }
-});
+);
+
+// ======================================================
+// BARTENDER DASHBOARD
+// ======================================================
 
 async function refreshDashboard() {
+
   try {
-    const { customers, products, ratings } = await api("/api/bartender/dashboard");
-    $("customerCards").innerHTML = customers.map(customer => `
-      <div class="customer-card">
-        <h3>${customer.username}</h3>
-        <div class="balance">${money(customer.balanceCents)}</div>
-        <div class="shift"><span class="dot ${customer.onShift ? "on" : ""}"></span><span>${customer.onShift ? "On shift — buying disabled" : "Off shift"}</span></div>
-      </div>`).join("");
 
-    $("productGrid").innerHTML = Object.entries(products).map(([id, product]) => `
-      <div class="item">
-        <div class="emoji">${({wine_half:"🍷",wine_full:"🍷",water:"💧",chips:"🥔",candy:"🍬"})[id]}</div>
-        <h3>${product.name}</h3>
-        <p>${money(product.priceCents)}</p>
-        <button type="button" data-product="${id}" ${customers.find(c => c.username === $("customerSelect").value)?.onShift ? "disabled" : ""}>Charge customer</button>
-      </div>`).join("");
+    const { customers, products, ratings } =
+      await api("/api/bartender/dashboard");
 
-    $("ratingsList").innerHTML = ratings.length ? ratings.map(r => `
-      <div class="rating-row"><span>${r.customer} · ${r.itemName}</span><strong>${"★".repeat(r.rating)}${"☆".repeat(5-r.rating)}</strong></div>`).join("") : "No ratings yet.";
+    $("customerCards").innerHTML =
+      customers.map(customer => `
+
+        <div class="customer-card">
+
+          <h3>${customer.username}</h3>
+
+          <div class="balance">
+            ${money(customer.balanceCents)}
+          </div>
+
+          <div class="shift">
+
+            <span class="dot ${
+              customer.onShift ? "on" : ""
+            }"></span>
+
+            <span>
+              ${
+                customer.onShift
+                  ? "On shift — buying disabled"
+                  : "Off shift"
+              }
+            </span>
+
+          </div>
+
+        </div>
+
+      `).join("");
+
+    $("productGrid").innerHTML =
+      Object.entries(products).map(
+        ([id, product]) => `
+
+          <div class="item">
+
+            <div class="emoji">
+              ${
+                ({
+                  wine_half: "🍷",
+                  wine_full: "🍷",
+                  water: "💧",
+                  chips: "🥔",
+                  candy: "🍬"
+                })[id]
+              }
+            </div>
+
+            <h3>${product.name}</h3>
+
+            <p>${money(product.priceCents)}</p>
+
+            <button
+              type="button"
+              data-product="${id}"
+
+              ${
+                customers.find(
+                  c => c.username === $("customerSelect").value
+                )?.onShift
+                  ? "disabled"
+                  : ""
+              }
+            >
+              Charge customer
+            </button>
+
+          </div>
+
+        `
+      ).join("");
+
+    $("ratingsList").innerHTML =
+      ratings.length
+
+        ? ratings.map(r => `
+
+            <div class="rating-row">
+
+              <span>
+                ${r.customer} · ${r.itemName}
+              </span>
+
+              <strong>
+                ${
+                  "★".repeat(r.rating)
+                }${
+                  "☆".repeat(5 - r.rating)
+                }
+              </strong>
+
+            </div>
+
+          `).join("")
+
+        : "No ratings yet.";
+
   } catch (error) {
-    showMessage($("bartenderNotice"), error.message, "error");
+
+    showMessage(
+      $("bartenderNotice"),
+      error.message,
+      "error"
+    );
+
   }
+
 }
 
-$("productGrid").addEventListener("click", async event => {
-  const button = event.target.closest("button[data-product]");
-  if (!button) return;
-  button.disabled = true;
-  try {
-    const customer = $("customerSelect").value;
-    const result = await api("/api/bartender/purchase", {
-      method: "POST",
-      body: JSON.stringify({ customer, productId: button.dataset.product })
-    });
-    showMessage($("bartenderNotice"), result.message + " The customer has been asked to rate the service.", "success");
-    await refreshDashboard();
-  } catch (error) {
-    showMessage($("bartenderNotice"), error.message, "error");
-    await refreshDashboard();
+// ======================================================
+// PURCHASE BUTTONS
+// ======================================================
+
+$("productGrid").addEventListener(
+  "click",
+  async event => {
+
+    const button =
+      event.target.closest("button[data-product]");
+
+    if (!button) return;
+
+    button.disabled = true;
+
+    try {
+
+      const customer =
+        $("customerSelect").value;
+
+      const result = await api(
+        "/api/bartender/purchase",
+        {
+          method: "POST",
+
+          body: JSON.stringify({
+            customer,
+            productId: button.dataset.product
+          })
+        }
+      );
+
+      showMessage(
+        $("bartenderNotice"),
+        result.message +
+        " The customer has been asked to rate the service.",
+        "success"
+      );
+
+      await refreshDashboard();
+
+    } catch (error) {
+
+      showMessage(
+        $("bartenderNotice"),
+        error.message,
+        "error"
+      );
+
+      await refreshDashboard();
+
+    }
+
   }
-});
+);
 
-$("customerSelect").addEventListener("change", refreshDashboard);
+// ======================================================
+// CUSTOMER SELECTION
+// ======================================================
 
-$("shiftButton").addEventListener("click", async () => {
-  $("shiftButton").disabled = true;
-  try {
-    await api("/api/customer/shift", { method: "POST", body: "{}" });
-    await refreshCustomer();
-  } catch (error) {
-    alert(error.message);
-  } finally {
-    $("shiftButton").disabled = false;
+$("customerSelect").addEventListener(
+  "change",
+  refreshDashboard
+);
+
+// ======================================================
+// SHIFT BUTTON
+// ======================================================
+
+$("shiftButton").addEventListener(
+  "click",
+  async () => {
+
+    $("shiftButton").disabled = true;
+
+    try {
+
+      await api(
+        "/api/customer/shift",
+        {
+          method: "POST",
+          body: "{}"
+        }
+      );
+
+      await refreshCustomer();
+
+    } catch (error) {
+
+      alert(error.message);
+
+    } finally {
+
+      $("shiftButton").disabled = false;
+
+    }
+
   }
-});
+);
 
-$("loginForm").addEventListener("submit", async event => {
-  event.preventDefault();
-  $("loginMessage").textContent = "";
-  try {
-    const result = await api("/api/login", {
-      method: "POST",
-      body: JSON.stringify({
-        username: $("username").value,
-        password: $("password").value
-      })
-    });
-    $("password").value = "";
-    showLoggedIn(result.user);
-  } catch (error) {
-    $("loginMessage").textContent = error.message;
+// ======================================================
+// LOGIN
+// ======================================================
+
+$("loginForm").addEventListener(
+  "submit",
+  async event => {
+
+    event.preventDefault();
+
+    $("loginMessage").textContent = "";
+
+    try {
+
+      const result = await api(
+        "/api/login",
+        {
+          method: "POST",
+
+          body: JSON.stringify({
+            username: $("username").value,
+            password: $("password").value
+          })
+        }
+      );
+
+      $("password").value = "";
+
+      showLoggedIn(result.user);
+
+    } catch (error) {
+
+      $("loginMessage").textContent =
+        error.message;
+
+    }
+
   }
-});
+);
 
-$("logoutButton").addEventListener("click", async () => {
-  stopPolling();
-  await api("/api/logout", { method: "POST", body: "{}" }).catch(() => {});
-  currentUser = null;
-  $("appView").classList.add("hidden");
-  $("loginView").classList.remove("hidden");
-});
+// ======================================================
+// LOGOUT
+// ======================================================
+
+$("logoutButton").addEventListener(
+  "click",
+  async () => {
+
+    stopPolling();
+
+    await api(
+      "/api/logout",
+      {
+        method: "POST",
+        body: "{}"
+      }
+    ).catch(() => {});
+
+    currentUser = null;
+    activeRatingId = null;
+
+    $("ratingModal").classList.add("hidden");
+
+    $("appView").classList.add("hidden");
+    $("loginView").classList.remove("hidden");
+
+    $("loginMessage").textContent = "";
+
+  }
+);
+
+// ======================================================
+// CHECK EXISTING LOGIN
+// ======================================================
 
 (async function init() {
+
   try {
+
     const result = await api("/api/me");
-    if (result.user) showLoggedIn(result.user);
+
+    if (result.user) {
+      showLoggedIn(result.user);
+    }
+
   } catch (error) {
+
     console.error(error);
+
   }
+
 })();
+
 </script>
+
 </body>
 </html>
