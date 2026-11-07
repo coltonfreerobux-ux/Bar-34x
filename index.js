@@ -33,10 +33,6 @@ const ACCOUNT_CONFIG = {
   bar388: { role: "bartender", password: "bar388" }
 };
 
-// ======================================================
-// SESSION SECRET
-// ======================================================
-
 if (!process.env.SESSION_SECRET || process.env.SESSION_SECRET.length < 32) {
   console.error("Set SESSION_SECRET to a random string at least 32 characters long.");
   process.exit(1);
@@ -57,7 +53,13 @@ function freshData() {
     },
     ratings: [],
     nextRatingId: 1,
-    purchases: []
+    purchases: [],
+    nextPurchaseId: 1,
+
+    // Bartender accountability system
+    bartenderDisappointedCount: 0,
+    bartenderRemoved: false,
+    bartenderNotifications: []
   };
 }
 
@@ -70,13 +72,17 @@ function loadData() {
     const saved = JSON.parse(fs.readFileSync(DATA_FILE, "utf8"));
 
     const loaded = {
-      accounts: { ...defaults.accounts, ...(saved.accounts || {}) },
+      ...defaults,
+      ...saved,
+      accounts: {
+        ...defaults.accounts,
+        ...(saved.accounts || {})
+      },
       ratings: Array.isArray(saved.ratings) ? saved.ratings : [],
-      nextRatingId:
-        Number.isInteger(saved.nextRatingId) && saved.nextRatingId > 0
-          ? saved.nextRatingId
-          : 1,
-      purchases: Array.isArray(saved.purchases) ? saved.purchases : []
+      purchases: Array.isArray(saved.purchases) ? saved.purchases : [],
+      bartenderNotifications: Array.isArray(saved.bartenderNotifications)
+        ? saved.bartenderNotifications
+        : []
     };
 
     for (const username of Object.keys(defaults.accounts)) {
@@ -93,12 +99,24 @@ function loadData() {
       };
     }
 
-    return loaded;
+    if (!Number.isInteger(loaded.nextRatingId) || loaded.nextRatingId < 1) {
+      loaded.nextRatingId = 1;
+    }
 
+    if (!Number.isInteger(loaded.nextPurchaseId) || loaded.nextPurchaseId < 1) {
+      loaded.nextPurchaseId = 1;
+    }
+
+    if (!Number.isInteger(loaded.bartenderDisappointedCount)) {
+      loaded.bartenderDisappointedCount = 0;
+    }
+
+    loaded.bartenderRemoved = Boolean(loaded.bartenderRemoved);
+
+    return loaded;
   } catch (error) {
     console.error("Could not load saved register data:", error);
-    console.error("Starting with fresh data. Check the data file before continuing.");
-    return defaults;
+    throw error;
   }
 }
 
@@ -117,7 +135,6 @@ function saveData() {
     );
 
     fs.renameSync(temporaryFile, DATA_FILE);
-
   } catch (error) {
     console.error("Could not save register data:", error);
     throw error;
@@ -162,10 +179,8 @@ function safeEqual(a, b) {
   const aBuf = Buffer.from(String(a));
   const bBuf = Buffer.from(String(b));
 
-  return (
-    aBuf.length === bBuf.length &&
-    crypto.timingSafeEqual(aBuf, bBuf)
-  );
+  return aBuf.length === bBuf.length &&
+    crypto.timingSafeEqual(aBuf, bBuf);
 }
 
 // ======================================================
@@ -197,28 +212,43 @@ app.use(cookieSession({
 }));
 
 // ======================================================
+// BARTENDER NOTIFICATIONS
+// ======================================================
+
+function addBartenderNotification(message, type = "warning") {
+  data.bartenderNotifications.push({
+    id: crypto.randomUUID(),
+    message,
+    type,
+    createdAt: Date.now(),
+    read: false
+  });
+
+  // Keep the latest 50 notifications.
+  data.bartenderNotifications =
+    data.bartenderNotifications.slice(-50);
+
+  saveData();
+}
+
+// ======================================================
 // LOGIN
 // ======================================================
 
 const loginAttempts = new Map();
-
 const LOGIN_WINDOW_MS = 10 * 60 * 1000;
 const MAX_LOGIN_ATTEMPTS = 8;
 
 app.post("/api/login", (req, res) => {
-  const username = String(req.body?.username || "")
-    .trim()
-    .toLowerCase();
-
+  const username = String(req.body?.username || "").trim().toLowerCase();
   const password = String(req.body?.password || "");
-  const config = ACCOUNT_CONFIG[username];
 
+  const config = ACCOUNT_CONFIG[username];
   const now = Date.now();
   const attempts = loginAttempts.get(username);
 
   if (attempts && now - attempts.startedAt >= LOGIN_WINDOW_MS) {
     loginAttempts.delete(username);
-
   } else if (attempts && attempts.count >= MAX_LOGIN_ATTEMPTS) {
     return res.status(429).json({
       error: "Too many login attempts. Try again in 10 minutes."
@@ -233,13 +263,19 @@ app.post("/api/login", (req, res) => {
         count: 1,
         startedAt: now
       });
-
     } else {
-      current.count += 1;
+      current.count++;
     }
 
     return res.status(401).json({
       error: "Incorrect username or password."
+    });
+  }
+
+  // Check whether bartender has been removed.
+  if (username === "bar388" && data.bartenderRemoved) {
+    return res.status(403).json({
+      error: "Your bartender account has been removed after three customer disappointments."
     });
   }
 
@@ -264,7 +300,6 @@ app.post("/api/login", (req, res) => {
 
 app.post("/api/logout", (req, res) => {
   req.session = null;
-
   res.json({ ok: true });
 });
 
@@ -282,6 +317,17 @@ function requireLogin(req, res, next) {
     });
   }
 
+  if (
+    req.session.username === "bar388" &&
+    data.bartenderRemoved
+  ) {
+    req.session = null;
+
+    return res.status(403).json({
+      error: "Your bartender account has been removed."
+    });
+  }
+
   next();
 }
 
@@ -292,6 +338,14 @@ function requireBartender(req, res, next) {
   ) {
     return res.status(403).json({
       error: "Bartender access only."
+    });
+  }
+
+  if (data.bartenderRemoved) {
+    req.session = null;
+
+    return res.status(403).json({
+      error: "You have been removed from the bartender system."
     });
   }
 
@@ -307,6 +361,14 @@ app.get("/api/me", (req, res) => {
     ACCOUNT_CONFIG[req.session.username];
 
   if (!config || req.session.role !== config.role) {
+    return res.json({ user: null });
+  }
+
+  if (
+    req.session.username === "bar388" &&
+    data.bartenderRemoved
+  ) {
+    req.session = null;
     return res.json({ user: null });
   }
 
@@ -349,7 +411,6 @@ app.post("/api/customer/shift", requireLogin, (req, res) => {
 
   if (account.shiftStartedAt === null) {
     account.shiftStartedAt = Date.now();
-
   } else {
     settleShift(account);
   }
@@ -416,13 +477,138 @@ app.post("/api/customer/ratings/:id", requireLogin, (req, res) => {
     });
   }
 
+  // Save the customer's rating.
   rating.rating = ratingValue;
   rating.ratedAt = Date.now();
 
+  // ==================================================
+  // ONE-STAR REFUND AND BARTENDER WARNING SYSTEM
+  // ==================================================
+
+  if (ratingValue === 1) {
+    let purchase = null;
+
+    // Find the exact purchase connected to this rating.
+    if (rating.purchaseId) {
+      purchase = data.purchases.find(item =>
+        item.id === rating.purchaseId &&
+        item.customer === rating.customer
+      );
+    }
+
+    // Backward compatibility for older saved ratings.
+    if (!purchase) {
+      purchase = [...data.purchases].reverse().find(item =>
+        item.customer === rating.customer &&
+        item.itemName === rating.itemName &&
+        !item.refunded
+      );
+    }
+
+    let refundAmount = 0;
+
+    // Refund only if this purchase has not already been refunded.
+    if (purchase && !purchase.refunded) {
+      const account = data.accounts[rating.customer];
+
+      // Settle any active shift before applying the refund.
+      if (account.shiftStartedAt !== null) {
+        settleShift(account);
+      }
+
+      refundAmount = purchase.priceCents;
+      account.balanceCents += refundAmount;
+
+      purchase.refunded = true;
+      purchase.refundedAt = Date.now();
+
+      rating.refunded = true;
+      rating.refundCents = refundAmount;
+    } else {
+      rating.refunded = false;
+      rating.refundCents = 0;
+    }
+
+    // Increase bartender disappointment count.
+    data.bartenderDisappointedCount++;
+
+    const count = data.bartenderDisappointedCount;
+
+    // First and second disappointment warnings.
+    if (count < 3) {
+      addBartenderNotification(
+        `A customer was disappointed. If this happens three times, you will be removed. (${count}/3)`,
+        "warning"
+      );
+    }
+
+    // Third disappointment: remove bartender.
+    if (count >= 3) {
+      data.bartenderRemoved = true;
+
+      addBartenderNotification(
+        "You have been removed from the bartender system after three customer disappointments.",
+        "removed"
+      );
+    }
+
+    saveData();
+
+    return res.json({
+      ok: true,
+      rating: ratingValue,
+      refunded: Boolean(refundAmount),
+      refundCents: refundAmount,
+      disappointmentCount: count,
+      bartenderRemoved: data.bartenderRemoved,
+      message: refundAmount
+        ? `You received a full refund of $${(refundAmount / 100).toFixed(2)}.`
+        : "Your rating was recorded. A refund could not be matched to this purchase."
+    });
+  }
+
   saveData();
 
-  return res.json({ ok: true });
+  return res.json({
+    ok: true,
+    rating: ratingValue,
+    refunded: false,
+    message: "Thank you for rating your bartender."
+  });
 });
+
+// ======================================================
+// BARTENDER NOTIFICATIONS
+// ======================================================
+
+app.get(
+  "/api/bartender/notifications",
+  requireLogin,
+  requireBartender,
+  (req, res) => {
+    return res.json({
+      notifications: data.bartenderNotifications,
+      disappointmentCount: data.bartenderDisappointedCount,
+      removalThreshold: 3,
+      removed: data.bartenderRemoved
+    });
+  }
+);
+
+app.post(
+  "/api/bartender/notifications/read",
+  requireLogin,
+  requireBartender,
+  (req, res) => {
+    for (const notification of data.bartenderNotifications) {
+      notification.read = true;
+    }
+
+    saveData();
+
+    return res.json({ ok: true });
+  }
+);
 
 // ======================================================
 // BARTENDER DASHBOARD
@@ -446,7 +632,13 @@ app.get(
     return res.json({
       customers,
       products: PRODUCTS,
-      ratings
+      ratings,
+
+      // Notification and warning information.
+      notifications: data.bartenderNotifications,
+      disappointmentCount: data.bartenderDisappointedCount,
+      removalThreshold: 3,
+      bartenderRemoved: data.bartenderRemoved
     });
   }
 );
@@ -460,9 +652,7 @@ app.post(
   requireLogin,
   requireBartender,
   (req, res) => {
-    const customer = String(req.body?.customer || "")
-      .toLowerCase();
-
+    const customer = String(req.body?.customer || "").toLowerCase();
     const productId = String(req.body?.productId || "");
 
     if (!["owen448", "colton448"].includes(customer)) {
@@ -493,25 +683,36 @@ app.post(
       });
     }
 
+    // Charge customer.
     account.balanceCents -= product.priceCents;
 
+    // Create a unique purchase record.
+    const purchaseId = data.nextPurchaseId++;
+
     data.purchases.push({
+      id: purchaseId,
       customer,
       productId,
       itemName: product.name,
       priceCents: product.priceCents,
       bartender: "bar388",
-      purchasedAt: Date.now()
+      purchasedAt: Date.now(),
+      refunded: false,
+      refundedAt: null
     });
 
+    // Create rating request connected to exact purchase.
     data.ratings.push({
       id: data.nextRatingId++,
+      purchaseId,
       customer,
       itemName: product.name,
       bartender: "bar388",
       rating: null,
       createdAt: Date.now(),
-      ratedAt: null
+      ratedAt: null,
+      refunded: false,
+      refundCents: 0
     });
 
     saveData();
@@ -527,17 +728,15 @@ app.post(
 // SERVE WEBSITE AND HEALTH CHECK
 // ======================================================
 
-app.use(express.static(path.join(__dirname, "public"), {
-  index: false,
-  dotfiles: "deny"
-}));
-
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
 });
 
 app.get("/health", (req, res) => {
-  res.json({ ok: true });
+  res.json({
+    ok: true,
+    service: "Bar Register"
+  });
 });
 
 // ======================================================
