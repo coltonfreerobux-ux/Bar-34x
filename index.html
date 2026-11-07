@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,18 +13,14 @@
   background: #f3f4fa;
 }
 
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 body {
   margin: 0;
   padding: 24px 15px 50px;
 }
 
-button, input {
-  font: inherit;
-}
+button, input { font: inherit; }
 
 button {
   cursor: pointer;
@@ -35,19 +32,10 @@ button {
   color: white;
 }
 
-button:hover:not(:disabled) {
-  background: #5145bd;
-}
+button:hover:not(:disabled) { background: #5145bd; }
+button:disabled { opacity: .45; cursor: not-allowed; }
 
-button:disabled {
-  opacity: .45;
-  cursor: not-allowed;
-}
-
-.wrap {
-  max-width: 900px;
-  margin: auto;
-}
+.wrap { max-width: 900px; margin: auto; }
 
 .panel {
   background: white;
@@ -57,23 +45,11 @@ button:disabled {
   box-shadow: 0 7px 22px #2025360b;
 }
 
-h1 {
-  margin: 0 0 8px;
-  font-size: 30px;
-}
+h1 { margin: 0 0 8px; font-size: 30px; }
+h2 { margin: 0 0 16px; font-size: 21px; }
 
-h2 {
-  margin: 0 0 16px;
-  font-size: 21px;
-}
-
-.muted {
-  color: #707789;
-}
-
-.hidden {
-  display: none !important;
-}
+.muted { color: #707789; }
+.hidden { display: none !important; }
 
 .login {
   max-width: 410px;
@@ -86,8 +62,7 @@ h2 {
   margin: 15px 0;
 }
 
-.field input,
-.select {
+.field input, .select {
   width: 100%;
   padding: 12px;
   border: 1px solid #d9dce7;
@@ -100,6 +75,7 @@ h2 {
   min-height: 22px;
   margin-top: 12px;
   color: #bd4141;
+  overflow-wrap: anywhere;
 }
 
 .header {
@@ -130,19 +106,9 @@ h2 {
   padding: 16px;
 }
 
-.item .emoji {
-  font-size: 26px;
-  margin-bottom: 9px;
-}
-
-.item h3 {
-  margin: 0 0 7px;
-}
-
-.item p {
-  color: #707789;
-  margin: 0 0 13px;
-}
+.item .emoji { font-size: 26px; margin-bottom: 9px; }
+.item h3 { margin: 0 0 7px; }
+.item p { color: #707789; margin: 0 0 13px; }
 
 .customer-card {
   border: 1px solid #e6e8f0;
@@ -150,13 +116,8 @@ h2 {
   padding: 16px;
 }
 
-.customer-card h3 {
-  margin: 0 0 7px;
-}
-
-.customer-card .balance {
-  font-size: 24px;
-}
+.customer-card h3 { margin: 0 0 7px; }
+.customer-card .balance { font-size: 24px; }
 
 .notice {
   padding: 13px 15px;
@@ -165,17 +126,11 @@ h2 {
   color: #5145bd;
   margin-top: 15px;
   min-height: 45px;
+  overflow-wrap: anywhere;
 }
 
-.notice.error {
-  background: #fff1f1;
-  color: #b53c3c;
-}
-
-.notice.success {
-  background: #effaf4;
-  color: #16865d;
-}
+.notice.error { background: #fff1f1; color: #b53c3c; }
+.notice.success { background: #effaf4; color: #16865d; }
 
 .shift {
   display: flex;
@@ -190,11 +145,10 @@ h2 {
   height: 10px;
   border-radius: 50%;
   background: #a0a5b1;
+  flex-shrink: 0;
 }
 
-.dot.on {
-  background: #20a875;
-}
+.dot.on { background: #20a875; }
 
 .modal-backdrop {
   position: fixed;
@@ -234,13 +188,8 @@ h2 {
   color: white;
 }
 
-.small {
-  font-size: 13px;
-}
-
-.ratings {
-  margin-top: 22px;
-}
+.small { font-size: 13px; }
+.ratings { margin-top: 22px; }
 
 .rating-row {
   padding: 10px 0;
@@ -250,18 +199,52 @@ h2 {
   gap: 12px;
 }
 
+.warning-panel {
+  border: 1px solid #f0c6c6;
+  background: #fff7f7;
+  border-radius: 13px;
+  padding: 17px;
+  margin-bottom: 20px;
+}
+
+.warning-panel h2 { color: #a83232; }
+
+.warning-count {
+  font-size: 30px;
+  font-weight: 800;
+  color: #b53c3c;
+  margin: 8px 0;
+}
+
+.notification {
+  border: 1px solid #f0d4a4;
+  background: #fffaf0;
+  color: #76521b;
+  padding: 12px;
+  border-radius: 10px;
+  margin-top: 10px;
+  overflow-wrap: anywhere;
+}
+
+.notification.removed {
+  border-color: #efb5b5;
+  background: #fff0f0;
+  color: #a83232;
+}
+
+.notification-time {
+  display: block;
+  font-size: 11px;
+  margin-top: 6px;
+  opacity: .75;
+}
+
 @media(max-width:520px) {
-  body {
-    padding: 15px 12px 35px;
-  }
-
-  .panel {
-    padding: 18px;
-  }
-
-  h1 {
-    font-size: 26px;
-  }
+  body { padding: 15px 12px 35px; }
+  .panel { padding: 18px; }
+  h1 { font-size: 26px; }
+  .stars { gap: 5px; }
+  .star { padding: 8px 10px; }
 }
 </style>
 </head>
@@ -271,215 +254,159 @@ h2 {
 <div class="wrap">
 
   <!-- LOGIN -->
-
   <section id="loginView" class="panel login">
-
     <h1>Welcome</h1>
-
-    <p class="muted">
-      Sign in to your register account.
-    </p>
+    <p class="muted">Sign in to your register account.</p>
 
     <form id="loginForm">
-
       <label class="field">
         Username
-        <input
-          id="username"
-          autocomplete="username"
-          required
-          placeholder="Your username"
-        >
+        <input id="username" autocomplete="username" required placeholder="Your username">
       </label>
 
       <label class="field">
         Password
-        <input
-          id="password"
-          type="password"
-          autocomplete="current-password"
-          required
-          placeholder="Your password"
-        >
+        <input id="password" type="password" autocomplete="current-password" required placeholder="Your password">
       </label>
 
-      <button type="submit" style="width:100%">
-        Log In
-      </button>
-
+      <button type="submit" style="width:100%">Log In</button>
     </form>
 
-    <div
-      id="loginMessage"
-      class="message"
-      role="alert"
-    ></div>
-
+    <div id="loginMessage" class="message" role="alert"></div>
   </section>
 
   <!-- APPLICATION -->
-
   <section id="appView" class="hidden">
 
     <div class="header">
-
       <div>
         <h1>Bar Register</h1>
         <div id="welcome" class="muted"></div>
       </div>
 
-      <button id="logoutButton">
-        Log Out
-      </button>
-
+      <button id="logoutButton">Log Out</button>
     </div>
 
-    <!-- CUSTOMER DASHBOARD -->
-
+    <!-- CUSTOMER -->
     <section id="customerView" class="panel hidden">
-
       <h2>Your account</h2>
 
-      <div id="customerBalance" class="balance">
-        $100.00
-      </div>
+      <div id="customerBalance" class="balance">$100.00</div>
 
       <div id="customerShift" class="shift">
         <span class="dot"></span>
         <span>Off shift</span>
       </div>
 
-      <button
-        id="shiftButton"
-        style="margin-top:17px"
-      >
+      <button id="shiftButton" style="margin-top:17px">
         Go On Shift
       </button>
 
       <div class="notice">
-        Ask the bartender to ring up your items.
-        Purchases will be taken from this balance.
+        Ask the bartender to ring up your items. Purchases will be taken from this balance.
       </div>
 
-      <p class="muted small">
-        You earn $5.00 per minute while on shift.
-        Purchases are disabled while you are on shift.
-      </p>
+      <div id="customerNotice" class="notice hidden" role="status"></div>
 
+      <p class="muted small">
+        You earn $5.00 per minute while on shift. Purchases are disabled while you are on shift.
+      </p>
     </section>
 
-    <!-- BARTENDER DASHBOARD -->
-
+    <!-- BARTENDER -->
     <section id="bartenderView" class="panel hidden">
 
       <h2>Bartender register</h2>
 
+      <!-- ACCOUNTABILITY PANEL -->
+      <div class="warning-panel">
+        <h2>Bartender performance</h2>
+
+        <div class="muted small">Customer disappointments</div>
+
+        <div id="disappointmentCount" class="warning-count">
+          0 / 3
+        </div>
+
+        <div id="warningStatus" class="muted">
+          You have no customer disappointments.
+        </div>
+
+        <div class="small muted" style="margin-top:10px">
+          Three one-star customer ratings will result in removal from the bartender system.
+        </div>
+      </div>
+
+      <!-- NOTIFICATIONS -->
+      <h2>Notifications</h2>
+
+      <div id="notificationList">
+        <div class="notice">No new notifications.</div>
+      </div>
+
+      <p class="muted small">
+        Notifications refresh automatically.
+      </p>
+
+      <hr style="border:0;border-top:1px solid #eceef3;margin:22px 0">
+
       <p class="muted">
-        Choose a customer, then tap an item to charge
-        their account and send them a rating request.
+        Choose a customer, then tap an item to charge their account and send them a rating request.
       </p>
 
       <label class="field">
-
         Customer account
 
         <select id="customerSelect" class="select">
-
-          <option value="owen448">
-            Owen448
-          </option>
-
-          <option value="colton448">
-            Colton448
-          </option>
-
+          <option value="owen448">Owen448</option>
+          <option value="colton448">Colton448</option>
         </select>
-
       </label>
 
       <div id="customerCards" class="grid"></div>
 
-      <h2 style="margin-top:25px">
-        Menu — tap to charge
-      </h2>
+      <h2 style="margin-top:25px">Menu — tap to charge</h2>
 
       <div id="productGrid" class="grid"></div>
 
-      <div
-        id="bartenderNotice"
-        class="notice"
-        role="status"
-      >
+      <div id="bartenderNotice" class="notice" role="status">
         Ready to take an order.
       </div>
 
       <div class="ratings">
-
         <h2>Customer ratings</h2>
-
-        <div id="ratingsList" class="muted small">
-          No ratings yet.
-        </div>
-
+        <div id="ratingsList" class="muted small">No ratings yet.</div>
       </div>
 
     </section>
-
   </section>
-
 </div>
 
 <!-- RATING MODAL -->
-
-<div
-  id="ratingModal"
-  class="modal-backdrop hidden"
-  role="dialog"
-  aria-modal="true"
-  aria-labelledby="ratingTitle"
->
+<div id="ratingModal" class="modal-backdrop hidden"
+     role="dialog" aria-modal="true" aria-labelledby="ratingTitle">
 
   <div class="modal">
-
-    <h2 id="ratingTitle">
-      Rate your bartender
-    </h2>
+    <h2 id="ratingTitle">Rate your bartender</h2>
 
     <p id="ratingDescription" class="muted">
       How was your service?
     </p>
 
     <div id="starButtons" class="stars">
-
-      <button class="star" data-rating="1" aria-label="1 star">
-        ★
-      </button>
-
-      <button class="star" data-rating="2" aria-label="2 stars">
-        ★
-      </button>
-
-      <button class="star" data-rating="3" aria-label="3 stars">
-        ★
-      </button>
-
-      <button class="star" data-rating="4" aria-label="4 stars">
-        ★
-      </button>
-
-      <button class="star" data-rating="5" aria-label="5 stars">
-        ★
-      </button>
-
+      <button class="star" data-rating="1" aria-label="1 star">★</button>
+      <button class="star" data-rating="2" aria-label="2 stars">★</button>
+      <button class="star" data-rating="3" aria-label="3 stars">★</button>
+      <button class="star" data-rating="4" aria-label="4 stars">★</button>
+      <button class="star" data-rating="5" aria-label="5 stars">★</button>
     </div>
 
     <div id="ratingMessage" class="message"></div>
-
   </div>
-
 </div>
 
 <script>
+"use strict";
 
 const $ = id => document.getElementById(id);
 
@@ -491,33 +418,23 @@ let activeRatingId = null;
 const money = cents =>
   "$" + (cents / 100).toFixed(2);
 
-// ======================================================
-// API HELPER
-// ======================================================
-
 async function api(url, options = {}) {
-
   let response;
 
   try {
-
     response = await fetch(url, {
       ...options,
       cache: "no-store",
       credentials: "same-origin",
-
       headers: {
         "Content-Type": "application/json",
         ...(options.headers || {})
       }
     });
-
   } catch (error) {
-
     throw new Error(
       "Cannot reach the server. Check your connection and try again."
     );
-
   }
 
   const contentType =
@@ -526,68 +443,36 @@ async function api(url, options = {}) {
   let body = {};
 
   if (contentType.includes("application/json")) {
-
     body = await response.json().catch(() => ({}));
-
   } else {
-
     const text = await response.text().catch(() => "");
-
-    if (text) {
-      body.error = text.slice(0, 250);
-    }
-
+    if (text) body.error = text.slice(0, 250);
   }
 
   if (!response.ok) {
-
     throw new Error(
       body.error || `Server error (${response.status}).`
     );
-
   }
 
   return body;
 }
 
-// ======================================================
-// MESSAGE HELPER
-// ======================================================
-
 function showMessage(element, message, type = "") {
-
   element.textContent = message;
-
   element.className =
     "notice" + (type ? " " + type : "");
-
 }
 
-// ======================================================
-// STOP POLLING
-// ======================================================
-
 function stopPolling() {
-
-  if (customerPoll) {
-    clearInterval(customerPoll);
-  }
-
-  if (dashboardPoll) {
-    clearInterval(dashboardPoll);
-  }
+  if (customerPoll) clearInterval(customerPoll);
+  if (dashboardPoll) clearInterval(dashboardPoll);
 
   customerPoll = null;
   dashboardPoll = null;
-
 }
 
-// ======================================================
-// SHOW LOGGED IN USER
-// ======================================================
-
 function showLoggedIn(user) {
-
   currentUser = user;
 
   $("loginView").classList.add("hidden");
@@ -612,38 +497,29 @@ function showLoggedIn(user) {
   stopPolling();
 
   if (user.role === "customer") {
-
     refreshCustomer();
     checkPendingRatings();
 
     customerPoll = setInterval(() => {
-
       refreshCustomer();
       checkPendingRatings();
-
     }, 3000);
-
   } else {
-
     refreshDashboard();
 
     dashboardPoll = setInterval(
       refreshDashboard,
       3000
     );
-
   }
-
 }
 
 // ======================================================
-// CUSTOMER BALANCE
+// CUSTOMER DASHBOARD
 // ======================================================
 
 async function refreshCustomer() {
-
   try {
-
     const { customer } =
       await api("/api/customer/state");
 
@@ -657,34 +533,25 @@ async function refreshCustomer() {
 
     $("customerShift").innerHTML = `
       <span class="dot ${customer.onShift ? "on" : ""}"></span>
-
       <span>
-        ${
-          customer.onShift
-            ? "On shift — earning $5.00 per minute. Purchases are disabled."
-            : "Off shift — you can make purchases."
-        }
+        ${customer.onShift
+          ? "On shift — earning $5.00 per minute. Purchases are disabled."
+          : "Off shift — you can make purchases."}
       </span>
     `;
-
   } catch (error) {
-
     console.error(error);
-
   }
-
 }
 
 // ======================================================
-// PENDING RATINGS
+// CUSTOMER RATING REQUEST
 // ======================================================
 
 async function checkPendingRatings() {
-
   if (activeRatingId !== null) return;
 
   try {
-
     const { ratings } =
       await api("/api/customer/ratings/pending");
 
@@ -701,251 +568,303 @@ async function checkPendingRatings() {
 
     $("starButtons")
       .querySelectorAll("button")
-      .forEach(button => {
-        button.classList.remove("selected");
-      });
+      .forEach(button =>
+        button.classList.remove("selected")
+      );
 
     $("ratingModal").classList.remove("hidden");
-
   } catch (error) {
-
     console.error(error);
-
   }
-
 }
 
 // ======================================================
-// SUBMIT RATING
+// SUBMIT CUSTOMER RATING
 // ======================================================
 
-$("starButtons").addEventListener(
-  "click",
-  async event => {
+$("starButtons").addEventListener("click", async event => {
+  const button = event.target.closest(
+    "button[data-rating]"
+  );
 
-    const button =
-      event.target.closest("button[data-rating]");
+  if (!button || activeRatingId === null) return;
 
-    if (!button || activeRatingId === null) return;
+  const rating = Number(button.dataset.rating);
 
-    const rating = Number(button.dataset.rating);
-
-    $("starButtons")
-      .querySelectorAll("button")
-      .forEach(star => {
-
-        star.classList.toggle(
-          "selected",
-          Number(star.dataset.rating) <= rating
-        );
-
-      });
-
-    try {
-
-      await api(
-        `/api/customer/ratings/${activeRatingId}`,
-        {
-          method: "POST",
-          body: JSON.stringify({ rating })
-        }
+  $("starButtons")
+    .querySelectorAll("button")
+    .forEach(star => {
+      star.classList.toggle(
+        "selected",
+        Number(star.dataset.rating) <= rating
       );
+    });
 
-      $("ratingModal").classList.add("hidden");
+  $("ratingMessage").textContent =
+    "Submitting your rating...";
 
-      activeRatingId = null;
+  try {
+    const result = await api(
+      `/api/customer/ratings/${activeRatingId}`,
+      {
+        method: "POST",
+        body: JSON.stringify({ rating })
+      }
+    );
 
-      await checkPendingRatings();
+    $("ratingModal").classList.add("hidden");
+    activeRatingId = null;
 
-    } catch (error) {
-
-      $("ratingMessage").textContent =
-        error.message;
-
+    if (rating === 1 && result.refunded) {
+      showMessage(
+        $("customerNotice"),
+        `Your 1-star rating was recorded. You received a full refund of ${money(result.refundCents)}.`,
+        "success"
+      );
+      $("customerNotice").classList.remove("hidden");
+    } else if (rating === 1) {
+      showMessage(
+        $("customerNotice"),
+        result.message || "Your rating was recorded.",
+        "success"
+      );
+      $("customerNotice").classList.remove("hidden");
+    } else {
+      showMessage(
+        $("customerNotice"),
+        "Thank you for rating your bartender!",
+        "success"
+      );
+      $("customerNotice").classList.remove("hidden");
     }
 
+    await refreshCustomer();
+
+    checkPendingRatings();
+  } catch (error) {
+    $("ratingMessage").textContent = error.message;
   }
-);
+});
+
+// ======================================================
+// BARTENDER NOTIFICATIONS
+// ======================================================
+
+function displayNotifications(notifications) {
+  const container = $("notificationList");
+
+  if (!notifications || notifications.length === 0) {
+    container.innerHTML =
+      '<div class="notice">No new notifications.</div>';
+    return;
+  }
+
+  container.innerHTML = notifications
+    .slice()
+    .reverse()
+    .map(notification => {
+      const date = new Date(
+        notification.createdAt
+      ).toLocaleString();
+
+      const removed =
+        notification.type === "removed";
+
+      return `
+        <div class="notification ${removed ? "removed" : ""}">
+          <strong>
+            ${removed ? "Account removed" : "Customer warning"}
+          </strong>
+
+          <div>${escapeHTML(notification.message)}</div>
+
+          <span class="notification-time">
+            ${escapeHTML(date)}
+          </span>
+        </div>
+      `;
+    })
+    .join("");
+}
+
+function escapeHTML(value) {
+  return String(value).replace(
+    /[&<>"']/g,
+    character => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;"
+    })[character]
+  );
+}
 
 // ======================================================
 // BARTENDER DASHBOARD
 // ======================================================
 
 async function refreshDashboard() {
-
   try {
+    const {
+      customers,
+      products,
+      ratings,
+      notifications,
+      disappointmentCount,
+      removalThreshold
+    } = await api("/api/bartender/dashboard");
 
-    const { customers, products, ratings } =
-      await api("/api/bartender/dashboard");
+    // Performance counter.
+    const count = Number(disappointmentCount) || 0;
+    const threshold = Number(removalThreshold) || 3;
 
+    $("disappointmentCount").textContent =
+      `${count} / ${threshold}`;
+
+    if (count === 0) {
+      $("warningStatus").textContent =
+        "You have no customer disappointments.";
+    } else if (count === 1) {
+      $("warningStatus").textContent =
+        "WARNING: One customer was disappointed. Two more will result in removal.";
+    } else if (count === 2) {
+      $("warningStatus").textContent =
+        "FINAL WARNING: One more disappointed customer will result in removal.";
+    } else {
+      $("warningStatus").textContent =
+        "You have reached the removal threshold.";
+    }
+
+    displayNotifications(notifications);
+
+    // Customer cards.
     $("customerCards").innerHTML =
       customers.map(customer => `
-
         <div class="customer-card">
-
-          <h3>${customer.username}</h3>
+          <h3>${escapeHTML(customer.username)}</h3>
 
           <div class="balance">
             ${money(customer.balanceCents)}
           </div>
 
           <div class="shift">
-
-            <span class="dot ${
-              customer.onShift ? "on" : ""
-            }"></span>
-
+            <span class="dot ${customer.onShift ? "on" : ""}"></span>
             <span>
-              ${
-                customer.onShift
-                  ? "On shift — buying disabled"
-                  : "Off shift"
-              }
+              ${customer.onShift
+                ? "On shift — buying disabled"
+                : "Off shift"}
             </span>
-
           </div>
-
         </div>
-
       `).join("");
 
+    // Menu items.
     $("productGrid").innerHTML =
-      Object.entries(products).map(
-        ([id, product]) => `
-
-          <div class="item">
-
-            <div class="emoji">
-              ${
-                ({
-                  wine_half: "🍷",
-                  wine_full: "🍷",
-                  water: "💧",
-                  chips: "🥔",
-                  candy: "🍬"
-                })[id]
-              }
-            </div>
-
-            <h3>${product.name}</h3>
-
-            <p>${money(product.priceCents)}</p>
-
-            <button
-              type="button"
-              data-product="${id}"
-
-              ${
-                customers.find(
-                  c => c.username === $("customerSelect").value
-                )?.onShift
-                  ? "disabled"
-                  : ""
-              }
-            >
-              Charge customer
-            </button>
-
+      Object.entries(products).map(([id, product]) => `
+        <div class="item">
+          <div class="emoji">
+            ${({
+              wine_half: "🍷",
+              wine_full: "🍷",
+              water: "💧",
+              chips: "🥔",
+              candy: "🍬"
+            })[id] || "🛒"}
           </div>
 
-        `
-      ).join("");
+          <h3>${escapeHTML(product.name)}</h3>
 
+          <p>${money(product.priceCents)}</p>
+
+          <button
+            type="button"
+            data-product="${escapeHTML(id)}"
+            ${customers.find(c =>
+              c.username === $("customerSelect").value
+            )?.onShift ? "disabled" : ""}
+          >
+            Charge customer
+          </button>
+        </div>
+      `).join("");
+
+    // Ratings.
     $("ratingsList").innerHTML =
       ratings.length
-
         ? ratings.map(r => `
-
             <div class="rating-row">
-
               <span>
-                ${r.customer} · ${r.itemName}
+                ${escapeHTML(r.customer)} ·
+                ${escapeHTML(r.itemName)}
               </span>
 
               <strong>
-                ${
-                  "★".repeat(r.rating)
-                }${
-                  "☆".repeat(5 - r.rating)
-                }
+                ${"★".repeat(r.rating)}
+                ${"☆".repeat(5 - r.rating)}
               </strong>
-
             </div>
-
           `).join("")
-
         : "No ratings yet.";
 
   } catch (error) {
+    showMessage(
+      $("bartenderNotice"),
+      error.message,
+      "error"
+    );
+  }
+}
 
+// ======================================================
+// PURCHASE ITEMS
+// ======================================================
+
+$("productGrid").addEventListener("click", async event => {
+  const button = event.target.closest(
+    "button[data-product]"
+  );
+
+  if (!button) return;
+
+  button.disabled = true;
+
+  try {
+    const customer = $("customerSelect").value;
+
+    const result = await api(
+      "/api/bartender/purchase",
+      {
+        method: "POST",
+        body: JSON.stringify({
+          customer,
+          productId: button.dataset.product
+        })
+      }
+    );
+
+    showMessage(
+      $("bartenderNotice"),
+      result.message +
+        " The customer has been asked to rate the service.",
+      "success"
+    );
+
+    await refreshDashboard();
+
+  } catch (error) {
     showMessage(
       $("bartenderNotice"),
       error.message,
       "error"
     );
 
+    await refreshDashboard();
   }
-
-}
-
-// ======================================================
-// PURCHASE BUTTONS
-// ======================================================
-
-$("productGrid").addEventListener(
-  "click",
-  async event => {
-
-    const button =
-      event.target.closest("button[data-product]");
-
-    if (!button) return;
-
-    button.disabled = true;
-
-    try {
-
-      const customer =
-        $("customerSelect").value;
-
-      const result = await api(
-        "/api/bartender/purchase",
-        {
-          method: "POST",
-
-          body: JSON.stringify({
-            customer,
-            productId: button.dataset.product
-          })
-        }
-      );
-
-      showMessage(
-        $("bartenderNotice"),
-        result.message +
-        " The customer has been asked to rate the service.",
-        "success"
-      );
-
-      await refreshDashboard();
-
-    } catch (error) {
-
-      showMessage(
-        $("bartenderNotice"),
-        error.message,
-        "error"
-      );
-
-      await refreshDashboard();
-
-    }
-
-  }
-);
+});
 
 // ======================================================
-// CUSTOMER SELECTION
+// CUSTOMER SELECT
 // ======================================================
 
 $("customerSelect").addEventListener(
@@ -957,130 +876,89 @@ $("customerSelect").addEventListener(
 // SHIFT BUTTON
 // ======================================================
 
-$("shiftButton").addEventListener(
-  "click",
-  async () => {
+$("shiftButton").addEventListener("click", async () => {
+  $("shiftButton").disabled = true;
 
-    $("shiftButton").disabled = true;
+  try {
+    await api("/api/customer/shift", {
+      method: "POST",
+      body: "{}"
+    });
 
-    try {
+    await refreshCustomer();
 
-      await api(
-        "/api/customer/shift",
-        {
-          method: "POST",
-          body: "{}"
-        }
-      );
+  } catch (error) {
+    alert(error.message);
 
-      await refreshCustomer();
-
-    } catch (error) {
-
-      alert(error.message);
-
-    } finally {
-
-      $("shiftButton").disabled = false;
-
-    }
-
+  } finally {
+    $("shiftButton").disabled = false;
   }
-);
+});
 
 // ======================================================
 // LOGIN
 // ======================================================
 
-$("loginForm").addEventListener(
-  "submit",
-  async event => {
+$("loginForm").addEventListener("submit", async event => {
+  event.preventDefault();
 
-    event.preventDefault();
+  $("loginMessage").textContent = "";
 
-    $("loginMessage").textContent = "";
+  try {
+    const result = await api("/api/login", {
+      method: "POST",
+      body: JSON.stringify({
+        username: $("username").value,
+        password: $("password").value
+      })
+    });
 
-    try {
+    $("password").value = "";
 
-      const result = await api(
-        "/api/login",
-        {
-          method: "POST",
+    showLoggedIn(result.user);
 
-          body: JSON.stringify({
-            username: $("username").value,
-            password: $("password").value
-          })
-        }
-      );
-
-      $("password").value = "";
-
-      showLoggedIn(result.user);
-
-    } catch (error) {
-
-      $("loginMessage").textContent =
-        error.message;
-
-    }
-
+  } catch (error) {
+    $("loginMessage").textContent = error.message;
   }
-);
+});
 
 // ======================================================
 // LOGOUT
 // ======================================================
 
-$("logoutButton").addEventListener(
-  "click",
-  async () => {
+$("logoutButton").addEventListener("click", async () => {
+  stopPolling();
 
-    stopPolling();
+  await api("/api/logout", {
+    method: "POST",
+    body: "{}"
+  }).catch(() => {});
 
-    await api(
-      "/api/logout",
-      {
-        method: "POST",
-        body: "{}"
-      }
-    ).catch(() => {});
+  currentUser = null;
+  activeRatingId = null;
 
-    currentUser = null;
-    activeRatingId = null;
-
-    $("ratingModal").classList.add("hidden");
-
-    $("appView").classList.add("hidden");
-    $("loginView").classList.remove("hidden");
-
-    $("loginMessage").textContent = "";
-
-  }
-);
+  $("ratingModal").classList.add("hidden");
+  $("appView").classList.add("hidden");
+  $("loginView").classList.remove("hidden");
+  $("loginMessage").textContent = "";
+  $("password").value = "";
+});
 
 // ======================================================
-// CHECK EXISTING LOGIN
+// AUTO LOGIN CHECK
 // ======================================================
 
 (async function init() {
-
   try {
-
     const result = await api("/api/me");
 
     if (result.user) {
       showLoggedIn(result.user);
     }
-
   } catch (error) {
-
     console.error(error);
-
   }
-
 })();
-
 </script>
 
 </body>
