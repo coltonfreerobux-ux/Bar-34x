@@ -45,15 +45,15 @@ const PRODUCTS = {
 const ACCOUNT_CONFIG = {
   owen448: {
     role: "customer",
-    passwordEnv: "OWEN448_PASSWORD"
+    passwordEnv: "OWEN448"
   },
   colton448: {
     role: "customer",
-    passwordEnv: "COLTON448_PASSWORD"
+    passwordEnv: "COLTON448"
   },
   bar388: {
     role: "bartender",
-    passwordEnv: "BAR388_PASSWORD"
+    passwordEnv: "BAR388"
   }
 };
 
