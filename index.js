@@ -1,3 +1,4 @@
+
 "use strict";
 
 const express = require("express");
@@ -20,7 +21,11 @@ const PRODUCTS = {
   wine_full: { name: "Wine (Full)", priceCents: 900 },
   water: { name: "Water", priceCents: 500 },
   chips: { name: "Chips", priceCents: 700 },
-  candy: { name: "Candy", priceCents: 2000 }
+  candy: { name: "Candy", priceCents: 2000 },
+
+  // NEW ITEMS
+  lsc: { name: "LSC", priceCents: 1000 },
+  hahcac: { name: "HAHCAC", priceCents: 1700 }
 };
 
 // ======================================================
@@ -55,8 +60,6 @@ function freshData() {
     nextRatingId: 1,
     purchases: [],
     nextPurchaseId: 1,
-
-    // Bartender accountability system
     bartenderDisappointedCount: 0,
     bartenderRemoved: false,
     bartenderNotifications: []
@@ -92,7 +95,6 @@ function loadData() {
         balanceCents: Number.isInteger(account.balanceCents)
           ? account.balanceCents
           : defaults.accounts[username].balanceCents,
-
         shiftStartedAt: Number.isFinite(account.shiftStartedAt)
           ? account.shiftStartedAt
           : null
@@ -136,7 +138,7 @@ function saveData() {
 
     fs.renameSync(temporaryFile, DATA_FILE);
   } catch (error) {
-    console.error("Could not save register data:", error);
+    console.error("Could not save saved register data:", error);
     throw error;
   }
 }
@@ -224,7 +226,6 @@ function addBartenderNotification(message, type = "warning") {
     read: false
   });
 
-  // Keep the latest 50 notifications.
   data.bartenderNotifications =
     data.bartenderNotifications.slice(-50);
 
@@ -272,7 +273,6 @@ app.post("/api/login", (req, res) => {
     });
   }
 
-  // Check whether bartender has been removed.
   if (username === "bar388" && data.bartenderRemoved) {
     return res.status(403).json({
       error: "Your bartender account has been removed after three customer disappointments."
@@ -304,7 +304,7 @@ app.post("/api/logout", (req, res) => {
 });
 
 // ======================================================
-// AUTHENTICATION CHECKS
+// AUTHENTICATION
 // ======================================================
 
 function requireLogin(req, res, next) {
@@ -353,7 +353,7 @@ function requireBartender(req, res, next) {
 }
 
 // ======================================================
-// CHECK CURRENT LOGIN
+// CURRENT LOGIN
 // ======================================================
 
 app.get("/api/me", (req, res) => {
@@ -381,7 +381,7 @@ app.get("/api/me", (req, res) => {
 });
 
 // ======================================================
-// CUSTOMER ACCOUNT STATE
+// CUSTOMER STATE
 // ======================================================
 
 app.get("/api/customer/state", requireLogin, (req, res) => {
@@ -477,18 +477,12 @@ app.post("/api/customer/ratings/:id", requireLogin, (req, res) => {
     });
   }
 
-  // Save the customer's rating.
   rating.rating = ratingValue;
   rating.ratedAt = Date.now();
-
-  // ==================================================
-  // ONE-STAR REFUND AND BARTENDER WARNING SYSTEM
-  // ==================================================
 
   if (ratingValue === 1) {
     let purchase = null;
 
-    // Find the exact purchase connected to this rating.
     if (rating.purchaseId) {
       purchase = data.purchases.find(item =>
         item.id === rating.purchaseId &&
@@ -496,7 +490,6 @@ app.post("/api/customer/ratings/:id", requireLogin, (req, res) => {
       );
     }
 
-    // Backward compatibility for older saved ratings.
     if (!purchase) {
       purchase = [...data.purchases].reverse().find(item =>
         item.customer === rating.customer &&
@@ -507,11 +500,9 @@ app.post("/api/customer/ratings/:id", requireLogin, (req, res) => {
 
     let refundAmount = 0;
 
-    // Refund only if this purchase has not already been refunded.
     if (purchase && !purchase.refunded) {
       const account = data.accounts[rating.customer];
 
-      // Settle any active shift before applying the refund.
       if (account.shiftStartedAt !== null) {
         settleShift(account);
       }
@@ -529,12 +520,10 @@ app.post("/api/customer/ratings/:id", requireLogin, (req, res) => {
       rating.refundCents = 0;
     }
 
-    // Increase bartender disappointment count.
     data.bartenderDisappointedCount++;
 
     const count = data.bartenderDisappointedCount;
 
-    // First and second disappointment warnings.
     if (count < 3) {
       addBartenderNotification(
         `A customer was disappointed. If this happens three times, you will be removed. (${count}/3)`,
@@ -542,7 +531,6 @@ app.post("/api/customer/ratings/:id", requireLogin, (req, res) => {
       );
     }
 
-    // Third disappointment: remove bartender.
     if (count >= 3) {
       data.bartenderRemoved = true;
 
@@ -633,8 +621,6 @@ app.get(
       customers,
       products: PRODUCTS,
       ratings,
-
-      // Notification and warning information.
       notifications: data.bartenderNotifications,
       disappointmentCount: data.bartenderDisappointedCount,
       removalThreshold: 3,
@@ -683,10 +669,8 @@ app.post(
       });
     }
 
-    // Charge customer.
     account.balanceCents -= product.priceCents;
 
-    // Create a unique purchase record.
     const purchaseId = data.nextPurchaseId++;
 
     data.purchases.push({
@@ -701,7 +685,6 @@ app.post(
       refundedAt: null
     });
 
-    // Create rating request connected to exact purchase.
     data.ratings.push({
       id: data.nextRatingId++,
       purchaseId,
@@ -725,7 +708,7 @@ app.post(
 );
 
 // ======================================================
-// SERVE WEBSITE AND HEALTH CHECK
+// WEBSITE AND HEALTH CHECK
 // ======================================================
 
 app.get("/", (req, res) => {
