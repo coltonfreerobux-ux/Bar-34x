@@ -1,1 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Snack & Drink Register</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #202536;
+      --muted: #6d7485;
+      --purple: #6558d3;
+      --purple-dark: #5145bd;
+      --surface: #ffffff;
+      --background: #f4f5fb;
+      --border: #e7e9f1;
+      --green: #16865d;
+      --red: #c64747;
+    }
 
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      padding: 28px 18px 48px;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--ink);
+      background: linear-gradient(135deg, #f5f6ff 0%, #eef1f8 100%);
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      max-width: 900px;
+      margin: 0 auto 26px;
+    }
+
+    button {
+      font: inherit;
+      cursor: pointer;
+      border: 0;
+      transition: transform .12s ease, background .12s ease, opacity .12s ease;
+    }
+
+    button:active:not(:disabled) { transform: scale(.98); }
+
+    .shift-button {
+      padding: 13px 18px;
+      border-radius: 12px;
+      color: white;
+      background: var(--purple);
+      font-weight: 700;
+      box-shadow: 0 5px 14px rgba(101, 88, 211, .2);
+    }
+
+    .shift-button:hover { background: var(--purple-dark); }
+    .shift-button.off { background: #30384b; }
+    .shift-button.off:hover { background: #202638; }
+
+    .balance-card {
+      min-width: 150px;
+      padding: 11px 16px;
+      text-align: right;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(32, 37, 54, .04);
+    }
+
+    .balance-label {
+      display: block;
+      margin-bottom: 3px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+    }
+
+    .balance-value { font-size: 25px; font-weight: 800; }
+
+    main { max-width: 900px; margin: 0 auto; }
+
+    .heading { margin: 0 0 7px; font-size: clamp(27px, 5vw, 36px); }
+    .subtitle { margin: 0 0 24px; color: var(--muted); line-height: 1.5; }
+
+    .shift-status {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 22px;
+      padding: 14px 16px;
+      border: 1px solid var(--border);
+      border-radius: 13px;
+      background: rgba(255,255,255,.8);
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      flex: 0 0 10px;
+      border-radius: 50%;
+      background: #9aa1b1;
+    }
+
+    .shift-status.active .status-dot {
+      background: #20a875;
+      box-shadow: 0 0 0 4px rgba(32,168,117,.12);
+    }
+
+    .shift-status strong { color: var(--ink); }
+
+    .products {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(205px, 1fr));
+      gap: 16px;
+    }
+
+    .product {
+      padding: 21px;
+      border: 1px solid var(--border);
+      border-radius: 17px;
+      background: var(--surface);
+      box-shadow: 0 7px 22px rgba(32, 37, 54, .045);
+    }
+
+    .product-icon {
+      display: grid;
+      place-items: center;
+      width: 48px;
+      height: 48px;
+      margin-bottom: 15px;
+      border-radius: 14px;
+      background: #f0efff;
+      font-size: 25px;
+    }
+
+    .product h2 { margin: 0 0 6px; font-size: 19px; }
+    .price { margin: 0 0 17px; color: var(--muted); font-size: 15px; }
+
+    .buy-button {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 10px;
+      color: white;
+      background: var(--purple);
+      font-weight: 700;
+    }
+
+    .buy-button:hover:not(:disabled) { background: var(--purple-dark); }
+    .buy-button:disabled { cursor: not-allowed; opacity: .42; }
+
+    .notice {
+      min-height: 48px;
+      margin-top: 20px;
+      padding: 14px 16px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: rgba(255,255,255,.8);
+      color: var(--muted);
+    }
+
+    .notice.success { color: var(--green); border-color: #ccebdd; background: #f2fbf6; }
+    .notice.error { color: var(--red); border-color: #f1d5d5; background: #fff7f7; }
+
+    .hint {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 520px) {
+      body { padding: 18px 14px 36px; }
+      .topbar { align-items: stretch; }
+      .shift-button { flex: 1; }
+      .balance-card { min-width: 125px; }
+      .balance-value { font-size: 22px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <button id="shiftButton" class="shift-button" type="button">Go On Shift</button>
+    <div class="balance-card" aria-live="polite">
+      <span class="balance-label">Your balance</span>
+      <span id="balance" class="balance-value">$100.00</span>
+    </div>
+  </header>
+
+  <main>
+    <h1 class="heading">Snack &amp; Drink Menu</h1>
+    <p class="subtitle">Choose an item to buy. You earn $5.00 for every minute you are on shift.</p>
+
+    <div id="shiftStatus" class="shift-status" aria-live="polite">
+      <span class="status-dot"></span>
+      <span><strong>Off shift.</strong> You can buy items.</span>
+    </div>
+
+    <section class="products" aria-label="Items for sale">
+      <article class="product">
+        <div class="product-icon" aria-hidden="true">🍷</div>
+        <h2>Wine (Half)</h2>
+        <p class="price">$4.00</p>
+        <button class="buy-button" type="button" data-name="Wine (Half)" data-price="4">Buy for $4</button>
+      </article>
+
+      <article class="product">
+        <div class="product-icon" aria-hidden="true">🍷</div>
+        <h2>Wine (Full)</h2>
+        <p class="price">$9.00</p>
+        <button class="buy-button" type="button" data-name="Wine (Full)" data-price="9">Buy for $9</button>
+      </article>
+
+      <article class="product">
+        <div class="product-icon" aria-hidden="true">💧</div>
+        <h2>Water</h2>
+        <p class="price">$5.00</p>
+        <button class="buy-button" type="button" data-name="Water" data-price="5">Buy for $5</button>
+      </article>
+
+      <article class="product">
+        <div class="product-icon" aria-hidden="true">🥔</div>
+        <h2>Chips</h2>
+        <p class="price">$7.00</p>
+        <button class="buy-button" type="button" data-name="Chips" data-price="7">Buy for $7</button>
+      </article>
+
+      <article class="product">
+        <div class="product-icon" aria-hidden="true">🍬</div>
+        <h2>Candy</h2>
+        <p class="price">$20.00</p>
+        <button class="buy-button" type="button" data-name="Candy" data-price="20">Buy for $20</button>
+      </article>
+    </section>
+
+    <div id="notice" class="notice" role="status" aria-live="polite">Welcome! You start with $100.00.</div>
+    <p class="hint">Your balance and shift status are saved in this browser, so refreshing the page will not reset your progress.</p>
+  </main>
+
+  <script>
+    const STARTING_BALANCE_CENTS = 10000;
+    const EARNINGS_PER_MINUTE_CENTS = 500;
+    const STORAGE_KEY = "snackDrinkRegisterState";
+
+    const balanceElement = document.getElementById("balance");
+    const shiftButton = document.getElementById("shiftButton");
+    const shiftStatus = document.getElementById("shiftStatus");
+    const notice = document.getElementById("notice");
+    const buyButtons = document.querySelectorAll(".buy-button");
+
+    function loadState() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+        if (saved && Number.isInteger(saved.balanceCents)) {
+          return {
+            balanceCents: Math.max(0, saved.balanceCents),
+            shiftStartedAt: Number.isFinite(saved.shiftStartedAt) ? saved.shiftStartedAt : null
+          };
+        }
+      } catch (error) {
+        console.warn("Could not load saved register data:", error);
+      }
+      return { balanceCents: STARTING_BALANCE_CENTS, shiftStartedAt: null };
+    }
+
+    let state = loadState();
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      } catch (error) {
+        console.warn("Could not save register data:", error);
+      }
+    }
+
+    function money(cents) {
+      return "$" + (cents / 100).toFixed(2);
+    }
+
+    function currentBalanceCents() {
+      if (state.shiftStartedAt === null) return state.balanceCents;
+      const elapsedMilliseconds = Math.max(0, Date.now() - state.shiftStartedAt);
+      const earnedCents = Math.floor(
+        elapsedMilliseconds * EARNINGS_PER_MINUTE_CENTS / 60000
+      );
+      return state.balanceCents + earnedCents;
+    }
+
+    function showNotice(message, type = "") {
+      notice.textContent = message;
+      notice.className = "notice" + (type ? " " + type : "");
+    }
+
+    function updateDisplay() {
+      const onShift = state.shiftStartedAt !== null;
+      balanceElement.textContent = money(currentBalanceCents());
+
+      shiftButton.textContent = onShift ? "Go Off Shift" : "Go On Shift";
+      shiftButton.classList.toggle("off", onShift);
+
+      shiftStatus.classList.toggle("active", onShift);
+      if (onShift) {
+        shiftStatus.innerHTML =
+          '<span class="status-dot"></span><span><strong>On shift.</strong> You are earning $5.00 per minute. Buying is disabled.</span>';
+      } else {
+        shiftStatus.innerHTML =
+          '<span class="status-dot"></span><span><strong>Off shift.</strong> You can buy items.</span>';
+      }
+
+      buyButtons.forEach(button => {
+        button.disabled = onShift;
+      });
+    }
+
+    shiftButton.addEventListener("click", () => {
+      if (state.shiftStartedAt === null) {
+        state.shiftStartedAt = Date.now();
+        saveState();
+        showNotice("You are now on shift. You will earn $5.00 every minute.", "success");
+      } else {
+        state.balanceCents = currentBalanceCents();
+        state.shiftStartedAt = null;
+        saveState();
+        showNotice("You are off shift. Your earnings have been added to your balance.", "success");
+      }
+      updateDisplay();
+    });
+
+    buyButtons.forEach(button => {
+      button.addEventListener("click", () => {
+        if (state.shiftStartedAt !== null) {
+          showNotice("You cannot buy anything while you are on shift.", "error");
+          updateDisplay();
+          return;
+        }
+
+        const itemName = button.dataset.name;
+        const priceCents = Math.round(Number(button.dataset.price) * 100);
+
+        if (state.balanceCents < priceCents) {
+          showNotice("Not enough money to buy " + itemName + ".", "error");
+          return;
+        }
+
+        state.balanceCents -= priceCents;
+        saveState();
+        updateDisplay();
+        showNotice("Bought " + itemName + "! " + money(priceCents) + " was subtracted from your balance.", "success");
+      });
+    });
+
+    // Refresh the displayed earnings while the shift is active.
+    window.setInterval(updateDisplay, 1000);
+
+    // Settle elapsed shift earnings when the tab is closed or refreshed.
+    window.addEventListener("pagehide", () => {
+      saveState();
+    });
+
+    updateDisplay();
+  </script>
+</body>
+</html>
