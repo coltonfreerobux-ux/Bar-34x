@@ -1,762 +1,965 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bar Register</title>
+
+<style>
+:root {
+  font-family: Arial, Helvetica, sans-serif;
+  color: #202536;
+  background: #f3f4fa;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: 24px 15px 50px;
+}
+
+button, input { font: inherit; }
+
+button {
+  cursor: pointer;
+  border: 0;
+  border-radius: 10px;
+  padding: 12px 15px;
+  font-weight: 700;
+  background: #6558d3;
+  color: white;
+}
+
+button:hover:not(:disabled) { background: #5145bd; }
+button:disabled { opacity: .45; cursor: not-allowed; }
+
+.wrap { max-width: 900px; margin: auto; }
+
+.panel {
+  background: white;
+  border: 1px solid #e5e7ef;
+  border-radius: 17px;
+  padding: 22px;
+  box-shadow: 0 7px 22px #2025360b;
+}
+
+h1 { margin: 0 0 8px; font-size: 30px; }
+h2 { margin: 0 0 16px; font-size: 21px; }
+
+.muted { color: #707789; }
+.hidden { display: none !important; }
+
+.login {
+  max-width: 410px;
+  margin: 8vh auto;
+}
+
+.field {
+  display: grid;
+  gap: 7px;
+  margin: 15px 0;
+}
+
+.field input, .select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #d9dce7;
+  border-radius: 9px;
+  background: white;
+  color: #202536;
+}
+
+.message {
+  min-height: 22px;
+  margin-top: 12px;
+  color: #bd4141;
+  overflow-wrap: anywhere;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+}
+
+.balance {
+  font-size: 30px;
+  font-weight: 800;
+  margin: 5px 0 16px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 13px;
+  margin-top: 14px;
+}
+
+.item {
+  border: 1px solid #e6e8f0;
+  border-radius: 13px;
+  padding: 16px;
+}
+
+.item .emoji { font-size: 26px; margin-bottom: 9px; }
+.item h3 { margin: 0 0 7px; }
+.item p { color: #707789; margin: 0 0 13px; }
+
+.customer-card {
+  border: 1px solid #e6e8f0;
+  border-radius: 13px;
+  padding: 16px;
+}
+
+.customer-card h3 { margin: 0 0 7px; }
+.customer-card .balance { font-size: 24px; }
+
+.notice {
+  padding: 13px 15px;
+  border-radius: 10px;
+  background: #f2f0ff;
+  color: #5145bd;
+  margin-top: 15px;
+  min-height: 45px;
+  overflow-wrap: anywhere;
+}
+
+.notice.error { background: #fff1f1; color: #b53c3c; }
+.notice.success { background: #effaf4; color: #16865d; }
+
+.shift {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+  color: #596174;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #a0a5b1;
+  flex-shrink: 0;
+}
+
+.dot.on { background: #20a875; }
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: #151827a8;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  z-index: 5;
+}
+
+.modal {
+  width: min(420px, 100%);
+  background: white;
+  border-radius: 18px;
+  padding: 25px;
+  text-align: center;
+  box-shadow: 0 20px 70px #0003;
+}
+
+.stars {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin: 20px 0;
+}
+
+.star {
+  background: #eceafc;
+  color: #5145bd;
+  font-size: 25px;
+  padding: 9px 12px;
+}
+
+.star.selected {
+  background: #6558d3;
+  color: white;
+}
+
+.small { font-size: 13px; }
+.ratings { margin-top: 22px; }
+
+.rating-row {
+  padding: 10px 0;
+  border-bottom: 1px solid #eceef3;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.warning-panel {
+  border: 1px solid #f0c6c6;
+  background: #fff7f7;
+  border-radius: 13px;
+  padding: 17px;
+  margin-bottom: 20px;
+}
+
+.warning-panel h2 { color: #a83232; }
+
+.warning-count {
+  font-size: 30px;
+  font-weight: 800;
+  color: #b53c3c;
+  margin: 8px 0;
+}
+
+.notification {
+  border: 1px solid #f0d4a4;
+  background: #fffaf0;
+  color: #76521b;
+  padding: 12px;
+  border-radius: 10px;
+  margin-top: 10px;
+  overflow-wrap: anywhere;
+}
+
+.notification.removed {
+  border-color: #efb5b5;
+  background: #fff0f0;
+  color: #a83232;
+}
+
+.notification-time {
+  display: block;
+  font-size: 11px;
+  margin-top: 6px;
+  opacity: .75;
+}
+
+@media(max-width:520px) {
+  body { padding: 15px 12px 35px; }
+  .panel { padding: 18px; }
+  h1 { font-size: 26px; }
+  .stars { gap: 5px; }
+  .star { padding: 8px 10px; }
+}
+</style>
+</head>
+
+<body>
+
+<div class="wrap">
+
+  <!-- LOGIN -->
+  <section id="loginView" class="panel login">
+    <h1>Welcome</h1>
+    <p class="muted">Sign in to your register account.</p>
+
+    <form id="loginForm">
+      <label class="field">
+        Username
+        <input id="username" autocomplete="username" required placeholder="Your username">
+      </label>
+
+      <label class="field">
+        Password
+        <input id="password" type="password" autocomplete="current-password" required placeholder="Your password">
+      </label>
+
+      <button type="submit" style="width:100%">Log In</button>
+    </form>
+
+    <div id="loginMessage" class="message" role="alert"></div>
+  </section>
+
+  <!-- APPLICATION -->
+  <section id="appView" class="hidden">
+
+    <div class="header">
+      <div>
+        <h1>Bar Register</h1>
+        <div id="welcome" class="muted"></div>
+      </div>
+
+      <button id="logoutButton">Log Out</button>
+    </div>
+
+    <!-- CUSTOMER -->
+    <section id="customerView" class="panel hidden">
+      <h2>Your account</h2>
+
+      <div id="customerBalance" class="balance">$100.00</div>
+
+      <div id="customerShift" class="shift">
+        <span class="dot"></span>
+        <span>Off shift</span>
+      </div>
+
+      <button id="shiftButton" style="margin-top:17px">
+        Go On Shift
+      </button>
+
+      <div class="notice">
+        Ask the bartender to ring up your items. Purchases will be taken from this balance.
+      </div>
+
+      <div id="customerNotice" class="notice hidden" role="status"></div>
+
+      <p class="muted small">
+        You earn $5.00 per minute while on shift. Purchases are disabled while you are on shift.
+      </p>
+    </section>
+
+    <!-- BARTENDER -->
+    <section id="bartenderView" class="panel hidden">
+
+      <h2>Bartender register</h2>
+
+      <!-- ACCOUNTABILITY PANEL -->
+      <div class="warning-panel">
+        <h2>Bartender performance</h2>
+
+        <div class="muted small">Customer disappointments</div>
+
+        <div id="disappointmentCount" class="warning-count">
+          0 / 3
+        </div>
+
+        <div id="warningStatus" class="muted">
+          You have no customer disappointments.
+        </div>
+
+        <div class="small muted" style="margin-top:10px">
+          Three one-star customer ratings will result in removal from the bartender system.
+        </div>
+      </div>
+
+      <!-- NOTIFICATIONS -->
+      <h2>Notifications</h2>
+
+      <div id="notificationList">
+        <div class="notice">No new notifications.</div>
+      </div>
+
+      <p class="muted small">
+        Notifications refresh automatically.
+      </p>
+
+      <hr style="border:0;border-top:1px solid #eceef3;margin:22px 0">
+
+      <p class="muted">
+        Choose a customer, then tap an item to charge their account and send them a rating request.
+      </p>
+
+      <label class="field">
+        Customer account
+
+        <select id="customerSelect" class="select">
+          <option value="owen448">Owen448</option>
+          <option value="colton448">Colton448</option>
+        </select>
+      </label>
+
+      <div id="customerCards" class="grid"></div>
+
+      <h2 style="margin-top:25px">Menu — tap to charge</h2>
+
+      <div id="productGrid" class="grid"></div>
+
+      <div id="bartenderNotice" class="notice" role="status">
+        Ready to take an order.
+      </div>
+
+      <div class="ratings">
+        <h2>Customer ratings</h2>
+        <div id="ratingsList" class="muted small">No ratings yet.</div>
+      </div>
+
+    </section>
+  </section>
+</div>
+
+<!-- RATING MODAL -->
+<div id="ratingModal" class="modal-backdrop hidden"
+     role="dialog" aria-modal="true" aria-labelledby="ratingTitle">
+
+  <div class="modal">
+    <h2 id="ratingTitle">Rate your bartender</h2>
+
+    <p id="ratingDescription" class="muted">
+      How was your service?
+    </p>
+
+    <div id="starButtons" class="stars">
+      <button class="star" data-rating="1" aria-label="1 star">★</button>
+      <button class="star" data-rating="2" aria-label="2 stars">★</button>
+      <button class="star" data-rating="3" aria-label="3 stars">★</button>
+      <button class="star" data-rating="4" aria-label="4 stars">★</button>
+      <button class="star" data-rating="5" aria-label="5 stars">★</button>
+    </div>
+
+    <div id="ratingMessage" class="message"></div>
+  </div>
+</div>
+
+<script>
 "use strict";
 
-const express = require("express");
-const cookieSession = require("cookie-session");
-const helmet = require("helmet");
-const path = require("path");
-const fs = require("fs");
-const crypto = require("crypto");
+const $ = id => document.getElementById(id);
 
-const app = express();
-const PORT = Number(process.env.PORT || 3000);
-const IS_PRODUCTION = process.env.NODE_ENV === "production";
+let currentUser = null;
+let customerPoll = null;
+let dashboardPoll = null;
+let activeRatingId = null;
 
-// ======================================================
-// MENU
-// ======================================================
+const money = cents =>
+  "$" + (cents / 100).toFixed(2);
 
-const PRODUCTS = {
-  wine_half: { name: "Wine (Half)", priceCents: 400 },
-  wine_full: { name: "Wine (Full)", priceCents: 900 },
-  water: { name: "Water", priceCents: 500 },
-  chips: { name: "Chips", priceCents: 700 },
-  candy: { name: "Candy", priceCents: 2000 },
-
-  // NEW ITEMS
-  lsc: { name: "LSC", priceCents: 1000 },
-  hahcac: { name: "HAHCAC", priceCents: 1700 }
-};
-
-// ======================================================
-// ACCOUNTS
-// ======================================================
-
-const ACCOUNT_CONFIG = {
-  owen448: { role: "customer", password: "owen448" },
-  colton448: { role: "customer", password: "colton448" },
-  bar388: { role: "bartender", password: "bar388" }
-};
-
-if (!process.env.SESSION_SECRET || process.env.SESSION_SECRET.length < 32) {
-  console.error("Set SESSION_SECRET to a random string at least 32 characters long.");
-  process.exit(1);
-}
-
-// ======================================================
-// PERSISTENT DATA
-// ======================================================
-
-const DATA_DIR = process.env.DATA_DIR || __dirname;
-const DATA_FILE = path.join(DATA_DIR, "bar-register-data.json");
-
-function freshData() {
-  return {
-    accounts: {
-      owen448: { balanceCents: 10000, shiftStartedAt: null },
-      colton448: { balanceCents: 10000, shiftStartedAt: null }
-    },
-    ratings: [],
-    nextRatingId: 1,
-    purchases: [],
-    nextPurchaseId: 1,
-    bartenderDisappointedCount: 0,
-    bartenderRemoved: false,
-    bartenderNotifications: []
-  };
-}
-
-function loadData() {
-  const defaults = freshData();
+async function api(url, options = {}) {
+  let response;
 
   try {
-    if (!fs.existsSync(DATA_FILE)) return defaults;
-
-    const saved = JSON.parse(fs.readFileSync(DATA_FILE, "utf8"));
-
-    const loaded = {
-      ...defaults,
-      ...saved,
-      accounts: {
-        ...defaults.accounts,
-        ...(saved.accounts || {})
-      },
-      ratings: Array.isArray(saved.ratings) ? saved.ratings : [],
-      purchases: Array.isArray(saved.purchases) ? saved.purchases : [],
-      bartenderNotifications: Array.isArray(saved.bartenderNotifications)
-        ? saved.bartenderNotifications
-        : []
-    };
-
-    for (const username of Object.keys(defaults.accounts)) {
-      const account = loaded.accounts[username] || defaults.accounts[username];
-
-      loaded.accounts[username] = {
-        balanceCents: Number.isInteger(account.balanceCents)
-          ? account.balanceCents
-          : defaults.accounts[username].balanceCents,
-        shiftStartedAt: Number.isFinite(account.shiftStartedAt)
-          ? account.shiftStartedAt
-          : null
-      };
-    }
-
-    if (!Number.isInteger(loaded.nextRatingId) || loaded.nextRatingId < 1) {
-      loaded.nextRatingId = 1;
-    }
-
-    if (!Number.isInteger(loaded.nextPurchaseId) || loaded.nextPurchaseId < 1) {
-      loaded.nextPurchaseId = 1;
-    }
-
-    if (!Number.isInteger(loaded.bartenderDisappointedCount)) {
-      loaded.bartenderDisappointedCount = 0;
-    }
-
-    loaded.bartenderRemoved = Boolean(loaded.bartenderRemoved);
-
-    return loaded;
+    response = await fetch(url, {
+      ...options,
+      cache: "no-store",
+      credentials: "same-origin",
+      headers: {
+        "Content-Type": "application/json",
+        ...(options.headers || {})
+      }
+    });
   } catch (error) {
-    console.error("Could not load saved register data:", error);
-    throw error;
+    throw new Error(
+      "Cannot reach the server. Check your connection and try again."
+    );
+  }
+
+  const contentType =
+    response.headers.get("content-type") || "";
+
+  let body = {};
+
+  if (contentType.includes("application/json")) {
+    body = await response.json().catch(() => ({}));
+  } else {
+    const text = await response.text().catch(() => "");
+    if (text) body.error = text.slice(0, 250);
+  }
+
+  if (!response.ok) {
+    throw new Error(
+      body.error || `Server error (${response.status}).`
+    );
+  }
+
+  return body;
+}
+
+function showMessage(element, message, type = "") {
+  element.textContent = message;
+  element.className =
+    "notice" + (type ? " " + type : "");
+}
+
+function stopPolling() {
+  if (customerPoll) clearInterval(customerPoll);
+  if (dashboardPoll) clearInterval(dashboardPoll);
+
+  customerPoll = null;
+  dashboardPoll = null;
+}
+
+function showLoggedIn(user) {
+  currentUser = user;
+
+  $("loginView").classList.add("hidden");
+  $("appView").classList.remove("hidden");
+
+  $("welcome").textContent =
+    user.username +
+    (user.role === "bartender"
+      ? " · Bartender"
+      : " · Customer");
+
+  $("customerView").classList.toggle(
+    "hidden",
+    user.role !== "customer"
+  );
+
+  $("bartenderView").classList.toggle(
+    "hidden",
+    user.role !== "bartender"
+  );
+
+  stopPolling();
+
+  if (user.role === "customer") {
+    refreshCustomer();
+    checkPendingRatings();
+
+    customerPoll = setInterval(() => {
+      refreshCustomer();
+      checkPendingRatings();
+    }, 3000);
+  } else {
+    refreshDashboard();
+
+    dashboardPoll = setInterval(
+      refreshDashboard,
+      3000
+    );
   }
 }
 
-let data = loadData();
+// ======================================================
+// CUSTOMER DASHBOARD
+// ======================================================
 
-function saveData() {
+async function refreshCustomer() {
   try {
-    fs.mkdirSync(DATA_DIR, { recursive: true });
+    const { customer } =
+      await api("/api/customer/state");
 
-    const temporaryFile = DATA_FILE + ".tmp";
+    $("customerBalance").textContent =
+      money(customer.balanceCents);
 
-    fs.writeFileSync(
-      temporaryFile,
-      JSON.stringify(data, null, 2),
-      "utf8"
+    $("shiftButton").textContent =
+      customer.onShift
+        ? "Go Off Shift"
+        : "Go On Shift";
+
+    $("customerShift").innerHTML = `
+      <span class="dot ${customer.onShift ? "on" : ""}"></span>
+      <span>
+        ${customer.onShift
+          ? "On shift — earning $5.00 per minute. Purchases are disabled."
+          : "Off shift — you can make purchases."}
+      </span>
+    `;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+// ======================================================
+// CUSTOMER RATING REQUEST
+// ======================================================
+
+async function checkPendingRatings() {
+  if (activeRatingId !== null) return;
+
+  try {
+    const { ratings } =
+      await api("/api/customer/ratings/pending");
+
+    if (!ratings.length) return;
+
+    const rating = ratings[0];
+
+    activeRatingId = rating.id;
+
+    $("ratingDescription").textContent =
+      `You just bought ${rating.itemName}. How was your service from the bartender?`;
+
+    $("ratingMessage").textContent = "";
+
+    $("starButtons")
+      .querySelectorAll("button")
+      .forEach(button =>
+        button.classList.remove("selected")
+      );
+
+    $("ratingModal").classList.remove("hidden");
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+// ======================================================
+// SUBMIT CUSTOMER RATING
+// ======================================================
+
+$("starButtons").addEventListener("click", async event => {
+  const button = event.target.closest(
+    "button[data-rating]"
+  );
+
+  if (!button || activeRatingId === null) return;
+
+  const rating = Number(button.dataset.rating);
+
+  $("starButtons")
+    .querySelectorAll("button")
+    .forEach(star => {
+      star.classList.toggle(
+        "selected",
+        Number(star.dataset.rating) <= rating
+      );
+    });
+
+  $("ratingMessage").textContent =
+    "Submitting your rating...";
+
+  try {
+    const result = await api(
+      `/api/customer/ratings/${activeRatingId}`,
+      {
+        method: "POST",
+        body: JSON.stringify({ rating })
+      }
     );
 
-    fs.renameSync(temporaryFile, DATA_FILE);
-  } catch (error) {
-    console.error("Could not save saved register data:", error);
-    throw error;
-  }
-}
+    $("ratingModal").classList.add("hidden");
+    activeRatingId = null;
 
-// ======================================================
-// BALANCE AND SHIFT FUNCTIONS
-// ======================================================
-
-function getAccountBalanceCents(account) {
-  if (account.shiftStartedAt === null) {
-    return account.balanceCents;
-  }
-
-  const elapsedMs = Math.max(0, Date.now() - account.shiftStartedAt);
-  const earned = Math.floor(elapsedMs * 500 / 60000);
-
-  return account.balanceCents + earned;
-}
-
-function settleShift(account) {
-  account.balanceCents = getAccountBalanceCents(account);
-  account.shiftStartedAt = null;
-}
-
-function publicCustomerState(username) {
-  const account = data.accounts[username];
-
-  return {
-    username,
-    balanceCents: getAccountBalanceCents(account),
-    onShift: account.shiftStartedAt !== null
-  };
-}
-
-// ======================================================
-// PASSWORD COMPARISON
-// ======================================================
-
-function safeEqual(a, b) {
-  const aBuf = Buffer.from(String(a));
-  const bBuf = Buffer.from(String(b));
-
-  return aBuf.length === bBuf.length &&
-    crypto.timingSafeEqual(aBuf, bBuf);
-}
-
-// ======================================================
-// MIDDLEWARE
-// ======================================================
-
-app.set("trust proxy", 1);
-
-app.use(helmet({
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "'unsafe-inline'"],
-      styleSrc: ["'self'", "'unsafe-inline'"],
-      imgSrc: ["'self'", "data:"]
+    if (rating === 1 && result.refunded) {
+      showMessage(
+        $("customerNotice"),
+        `Your 1-star rating was recorded. You received a full refund of ${money(result.refundCents)}.`,
+        "success"
+      );
+      $("customerNotice").classList.remove("hidden");
+    } else if (rating === 1) {
+      showMessage(
+        $("customerNotice"),
+        result.message || "Your rating was recorded.",
+        "success"
+      );
+      $("customerNotice").classList.remove("hidden");
+    } else {
+      showMessage(
+        $("customerNotice"),
+        "Thank you for rating your bartender!",
+        "success"
+      );
+      $("customerNotice").classList.remove("hidden");
     }
+
+    await refreshCustomer();
+
+    checkPendingRatings();
+  } catch (error) {
+    $("ratingMessage").textContent = error.message;
   }
-}));
-
-app.use(express.json({ limit: "10kb" }));
-
-app.use(cookieSession({
-  name: "bar_register_session",
-  keys: [process.env.SESSION_SECRET],
-  httpOnly: true,
-  sameSite: "lax",
-  secure: IS_PRODUCTION,
-  maxAge: 8 * 60 * 60 * 1000
-}));
+});
 
 // ======================================================
 // BARTENDER NOTIFICATIONS
 // ======================================================
 
-function addBartenderNotification(message, type = "warning") {
-  data.bartenderNotifications.push({
-    id: crypto.randomUUID(),
-    message,
-    type,
-    createdAt: Date.now(),
-    read: false
-  });
+function displayNotifications(notifications) {
+  const container = $("notificationList");
 
-  data.bartenderNotifications =
-    data.bartenderNotifications.slice(-50);
+  if (!notifications || notifications.length === 0) {
+    container.innerHTML =
+      '<div class="notice">No new notifications.</div>';
+    return;
+  }
 
-  saveData();
+  container.innerHTML = notifications
+    .slice()
+    .reverse()
+    .map(notification => {
+      const date = new Date(
+        notification.createdAt
+      ).toLocaleString();
+
+      const removed =
+        notification.type === "removed";
+
+      return `
+        <div class="notification ${removed ? "removed" : ""}">
+          <strong>
+            ${removed ? "Account removed" : "Customer warning"}
+          </strong>
+
+          <div>${escapeHTML(notification.message)}</div>
+
+          <span class="notification-time">
+            ${escapeHTML(date)}
+          </span>
+        </div>
+      `;
+    })
+    .join("");
 }
+
+function escapeHTML(value) {
+  return String(value).replace(
+    /[&<>"']/g,
+    character => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;"
+    })[character]
+  );
+}
+
+// ======================================================
+// BARTENDER DASHBOARD
+// ======================================================
+
+async function refreshDashboard() {
+  try {
+    const {
+      customers,
+      products,
+      ratings,
+      notifications,
+      disappointmentCount,
+      removalThreshold
+    } = await api("/api/bartender/dashboard");
+
+    // Performance counter.
+    const count = Number(disappointmentCount) || 0;
+    const threshold = Number(removalThreshold) || 3;
+
+    $("disappointmentCount").textContent =
+      `${count} / ${threshold}`;
+
+    if (count === 0) {
+      $("warningStatus").textContent =
+        "You have no customer disappointments.";
+    } else if (count === 1) {
+      $("warningStatus").textContent =
+        "WARNING: One customer was disappointed. Two more will result in removal.";
+    } else if (count === 2) {
+      $("warningStatus").textContent =
+        "FINAL WARNING: One more disappointed customer will result in removal.";
+    } else {
+      $("warningStatus").textContent =
+        "You have reached the removal threshold.";
+    }
+
+    displayNotifications(notifications);
+
+    // Customer cards.
+    $("customerCards").innerHTML =
+      customers.map(customer => `
+        <div class="customer-card">
+          <h3>${escapeHTML(customer.username)}</h3>
+
+          <div class="balance">
+            ${money(customer.balanceCents)}
+          </div>
+
+          <div class="shift">
+            <span class="dot ${customer.onShift ? "on" : ""}"></span>
+            <span>
+              ${customer.onShift
+                ? "On shift — buying disabled"
+                : "Off shift"}
+            </span>
+          </div>
+        </div>
+      `).join("");
+
+    // Menu items.
+    $("productGrid").innerHTML =
+      Object.entries(products).map(([id, product]) => `
+        <div class="item">
+          <div class="emoji">
+            ${({
+              wine_half: "🍷",
+              wine_full: "🍷",
+              water: "💧",
+              chips: "🥔",
+              candy: "🍬"
+            })[id] || "🛒"}
+          </div>
+
+          <h3>${escapeHTML(product.name)}</h3>
+
+          <p>${money(product.priceCents)}</p>
+
+          <button
+            type="button"
+            data-product="${escapeHTML(id)}"
+            ${customers.find(c =>
+              c.username === $("customerSelect").value
+            )?.onShift ? "disabled" : ""}
+          >
+            Charge customer
+          </button>
+        </div>
+      `).join("");
+
+    // Ratings.
+    $("ratingsList").innerHTML =
+      ratings.length
+        ? ratings.map(r => `
+            <div class="rating-row">
+              <span>
+                ${escapeHTML(r.customer)} ·
+                ${escapeHTML(r.itemName)}
+              </span>
+
+              <strong>
+                ${"★".repeat(r.rating)}
+                ${"☆".repeat(5 - r.rating)}
+              </strong>
+            </div>
+          `).join("")
+        : "No ratings yet.";
+
+  } catch (error) {
+    showMessage(
+      $("bartenderNotice"),
+      error.message,
+      "error"
+    );
+  }
+}
+
+// ======================================================
+// PURCHASE ITEMS
+// ======================================================
+
+$("productGrid").addEventListener("click", async event => {
+  const button = event.target.closest(
+    "button[data-product]"
+  );
+
+  if (!button) return;
+
+  button.disabled = true;
+
+  try {
+    const customer = $("customerSelect").value;
+
+    const result = await api(
+      "/api/bartender/purchase",
+      {
+        method: "POST",
+        body: JSON.stringify({
+          customer,
+          productId: button.dataset.product
+        })
+      }
+    );
+
+    showMessage(
+      $("bartenderNotice"),
+      result.message +
+        " The customer has been asked to rate the service.",
+      "success"
+    );
+
+    await refreshDashboard();
+
+  } catch (error) {
+    showMessage(
+      $("bartenderNotice"),
+      error.message,
+      "error"
+    );
+
+    await refreshDashboard();
+  }
+});
+
+// ======================================================
+// CUSTOMER SELECT
+// ======================================================
+
+$("customerSelect").addEventListener(
+  "change",
+  refreshDashboard
+);
+
+// ======================================================
+// SHIFT BUTTON
+// ======================================================
+
+$("shiftButton").addEventListener("click", async () => {
+  $("shiftButton").disabled = true;
+
+  try {
+    await api("/api/customer/shift", {
+      method: "POST",
+      body: "{}"
+    });
+
+    await refreshCustomer();
+
+  } catch (error) {
+    alert(error.message);
+
+  } finally {
+    $("shiftButton").disabled = false;
+  }
+});
 
 // ======================================================
 // LOGIN
 // ======================================================
 
-const loginAttempts = new Map();
-const LOGIN_WINDOW_MS = 10 * 60 * 1000;
-const MAX_LOGIN_ATTEMPTS = 8;
+$("loginForm").addEventListener("submit", async event => {
+  event.preventDefault();
 
-app.post("/api/login", (req, res) => {
-  const username = String(req.body?.username || "").trim().toLowerCase();
-  const password = String(req.body?.password || "");
+  $("loginMessage").textContent = "";
 
-  const config = ACCOUNT_CONFIG[username];
-  const now = Date.now();
-  const attempts = loginAttempts.get(username);
-
-  if (attempts && now - attempts.startedAt >= LOGIN_WINDOW_MS) {
-    loginAttempts.delete(username);
-  } else if (attempts && attempts.count >= MAX_LOGIN_ATTEMPTS) {
-    return res.status(429).json({
-      error: "Too many login attempts. Try again in 10 minutes."
+  try {
+    const result = await api("/api/login", {
+      method: "POST",
+      body: JSON.stringify({
+        username: $("username").value,
+        password: $("password").value
+      })
     });
+
+    $("password").value = "";
+
+    showLoggedIn(result.user);
+
+  } catch (error) {
+    $("loginMessage").textContent = error.message;
   }
-
-  if (!config || !safeEqual(password, config.password)) {
-    const current = loginAttempts.get(username);
-
-    if (!current || now - current.startedAt >= LOGIN_WINDOW_MS) {
-      loginAttempts.set(username, {
-        count: 1,
-        startedAt: now
-      });
-    } else {
-      current.count++;
-    }
-
-    return res.status(401).json({
-      error: "Incorrect username or password."
-    });
-  }
-
-  if (username === "bar388" && data.bartenderRemoved) {
-    return res.status(403).json({
-      error: "Your bartender account has been removed after three customer disappointments."
-    });
-  }
-
-  loginAttempts.delete(username);
-
-  req.session = {
-    username,
-    role: config.role
-  };
-
-  return res.json({
-    user: {
-      username,
-      role: config.role
-    }
-  });
 });
 
 // ======================================================
 // LOGOUT
 // ======================================================
 
-app.post("/api/logout", (req, res) => {
-  req.session = null;
-  res.json({ ok: true });
+$("logoutButton").addEventListener("click", async () => {
+  stopPolling();
+
+  await api("/api/logout", {
+    method: "POST",
+    body: "{}"
+  }).catch(() => {});
+
+  currentUser = null;
+  activeRatingId = null;
+
+  $("ratingModal").classList.add("hidden");
+  $("appView").classList.add("hidden");
+  $("loginView").classList.remove("hidden");
+  $("loginMessage").textContent = "";
+  $("password").value = "";
 });
 
 // ======================================================
-// AUTHENTICATION
+// AUTO LOGIN CHECK
 // ======================================================
 
-function requireLogin(req, res, next) {
-  const config = req.session &&
-    ACCOUNT_CONFIG[req.session.username];
+(async function init() {
+  try {
+    const result = await api("/api/me");
 
-  if (!config || req.session.role !== config.role) {
-    return res.status(401).json({
-      error: "Please log in."
-    });
-  }
-
-  if (
-    req.session.username === "bar388" &&
-    data.bartenderRemoved
-  ) {
-    req.session = null;
-
-    return res.status(403).json({
-      error: "Your bartender account has been removed."
-    });
-  }
-
-  next();
-}
-
-function requireBartender(req, res, next) {
-  if (
-    req.session?.role !== "bartender" ||
-    req.session.username !== "bar388"
-  ) {
-    return res.status(403).json({
-      error: "Bartender access only."
-    });
-  }
-
-  if (data.bartenderRemoved) {
-    req.session = null;
-
-    return res.status(403).json({
-      error: "You have been removed from the bartender system."
-    });
-  }
-
-  next();
-}
-
-// ======================================================
-// CURRENT LOGIN
-// ======================================================
-
-app.get("/api/me", (req, res) => {
-  const config = req.session &&
-    ACCOUNT_CONFIG[req.session.username];
-
-  if (!config || req.session.role !== config.role) {
-    return res.json({ user: null });
-  }
-
-  if (
-    req.session.username === "bar388" &&
-    data.bartenderRemoved
-  ) {
-    req.session = null;
-    return res.json({ user: null });
-  }
-
-  return res.json({
-    user: {
-      username: req.session.username,
-      role: config.role
+    if (result.user) {
+      showLoggedIn(result.user);
     }
-  });
-});
-
-// ======================================================
-// CUSTOMER STATE
-// ======================================================
-
-app.get("/api/customer/state", requireLogin, (req, res) => {
-  if (req.session.role !== "customer") {
-    return res.status(403).json({
-      error: "Customer account required."
-    });
+  } catch (error) {
+    console.error(error);
   }
-
-  return res.json({
-    customer: publicCustomerState(req.session.username)
-  });
-});
-
-// ======================================================
-// CUSTOMER SHIFT
-// ======================================================
-
-app.post("/api/customer/shift", requireLogin, (req, res) => {
-  if (req.session.role !== "customer") {
-    return res.status(403).json({
-      error: "Customer account required."
-    });
-  }
-
-  const account = data.accounts[req.session.username];
-
-  if (account.shiftStartedAt === null) {
-    account.shiftStartedAt = Date.now();
-  } else {
-    settleShift(account);
-  }
-
-  saveData();
-
-  return res.json({
-    customer: publicCustomerState(req.session.username)
-  });
-});
-
-// ======================================================
-// CUSTOMER PENDING RATINGS
-// ======================================================
-
-app.get("/api/customer/ratings/pending", requireLogin, (req, res) => {
-  if (req.session.role !== "customer") {
-    return res.status(403).json({
-      error: "Customer account required."
-    });
-  }
-
-  const pending = data.ratings.filter(rating =>
-    rating.customer === req.session.username &&
-    rating.rating === null
-  );
-
-  return res.json({ ratings: pending });
-});
-
-// ======================================================
-// CUSTOMER SUBMITS RATING
-// ======================================================
-
-app.post("/api/customer/ratings/:id", requireLogin, (req, res) => {
-  if (req.session.role !== "customer") {
-    return res.status(403).json({
-      error: "Customer account required."
-    });
-  }
-
-  const id = Number(req.params.id);
-  const ratingValue = Number(req.body?.rating);
-
-  if (
-    !Number.isInteger(ratingValue) ||
-    ratingValue < 1 ||
-    ratingValue > 5
-  ) {
-    return res.status(400).json({
-      error: "Choose a rating from 1 to 5."
-    });
-  }
-
-  const rating = data.ratings.find(item =>
-    item.id === id &&
-    item.customer === req.session.username &&
-    item.rating === null
-  );
-
-  if (!rating) {
-    return res.status(404).json({
-      error: "Rating request not found."
-    });
-  }
-
-  rating.rating = ratingValue;
-  rating.ratedAt = Date.now();
-
-  if (ratingValue === 1) {
-    let purchase = null;
-
-    if (rating.purchaseId) {
-      purchase = data.purchases.find(item =>
-        item.id === rating.purchaseId &&
-        item.customer === rating.customer
-      );
-    }
-
-    if (!purchase) {
-      purchase = [...data.purchases].reverse().find(item =>
-        item.customer === rating.customer &&
-        item.itemName === rating.itemName &&
-        !item.refunded
-      );
-    }
-
-    let refundAmount = 0;
-
-    if (purchase && !purchase.refunded) {
-      const account = data.accounts[rating.customer];
-
-      if (account.shiftStartedAt !== null) {
-        settleShift(account);
-      }
-
-      refundAmount = purchase.priceCents;
-      account.balanceCents += refundAmount;
-
-      purchase.refunded = true;
-      purchase.refundedAt = Date.now();
-
-      rating.refunded = true;
-      rating.refundCents = refundAmount;
-    } else {
-      rating.refunded = false;
-      rating.refundCents = 0;
-    }
-
-    data.bartenderDisappointedCount++;
-
-    const count = data.bartenderDisappointedCount;
-
-    if (count < 3) {
-      addBartenderNotification(
-        `A customer was disappointed. If this happens three times, you will be removed. (${count}/3)`,
-        "warning"
-      );
-    }
-
-    if (count >= 3) {
-      data.bartenderRemoved = true;
-
-      addBartenderNotification(
-        "You have been removed from the bartender system after three customer disappointments.",
-        "removed"
-      );
-    }
-
-    saveData();
-
-    return res.json({
-      ok: true,
-      rating: ratingValue,
-      refunded: Boolean(refundAmount),
-      refundCents: refundAmount,
-      disappointmentCount: count,
-      bartenderRemoved: data.bartenderRemoved,
-      message: refundAmount
-        ? `You received a full refund of $${(refundAmount / 100).toFixed(2)}.`
-        : "Your rating was recorded. A refund could not be matched to this purchase."
-    });
-  }
-
-  saveData();
-
-  return res.json({
-    ok: true,
-    rating: ratingValue,
-    refunded: false,
-    message: "Thank you for rating your bartender."
-  });
-});
-
-// ======================================================
-// BARTENDER NOTIFICATIONS
-// ======================================================
-
-app.get(
-  "/api/bartender/notifications",
-  requireLogin,
-  requireBartender,
-  (req, res) => {
-    return res.json({
-      notifications: data.bartenderNotifications,
-      disappointmentCount: data.bartenderDisappointedCount,
-      removalThreshold: 3,
-      removed: data.bartenderRemoved
-    });
-  }
-);
-
-app.post(
-  "/api/bartender/notifications/read",
-  requireLogin,
-  requireBartender,
-  (req, res) => {
-    for (const notification of data.bartenderNotifications) {
-      notification.read = true;
-    }
-
-    saveData();
-
-    return res.json({ ok: true });
-  }
-);
-
-// ======================================================
-// BARTENDER DASHBOARD
-// ======================================================
-
-app.get(
-  "/api/bartender/dashboard",
-  requireLogin,
-  requireBartender,
-  (req, res) => {
-    const customers = [
-      "owen448",
-      "colton448"
-    ].map(publicCustomerState);
-
-    const ratings = data.ratings
-      .filter(rating => rating.rating !== null)
-      .slice(-30)
-      .reverse();
-
-    return res.json({
-      customers,
-      products: PRODUCTS,
-      ratings,
-      notifications: data.bartenderNotifications,
-      disappointmentCount: data.bartenderDisappointedCount,
-      removalThreshold: 3,
-      bartenderRemoved: data.bartenderRemoved
-    });
-  }
-);
-
-// ======================================================
-// BARTENDER PURCHASE
-// ======================================================
-
-app.post(
-  "/api/bartender/purchase",
-  requireLogin,
-  requireBartender,
-  (req, res) => {
-    const customer = String(req.body?.customer || "").toLowerCase();
-    const productId = String(req.body?.productId || "");
-
-    if (!["owen448", "colton448"].includes(customer)) {
-      return res.status(400).json({
-        error: "Choose a valid customer account."
-      });
-    }
-
-    const product = PRODUCTS[productId];
-
-    if (!product) {
-      return res.status(400).json({
-        error: "Choose a valid menu item."
-      });
-    }
-
-    const account = data.accounts[customer];
-
-    if (account.shiftStartedAt !== null) {
-      return res.status(409).json({
-        error: "That customer is on shift and cannot make purchases."
-      });
-    }
-
-    if (account.balanceCents < product.priceCents) {
-      return res.status(400).json({
-        error: `${customer} does not have enough money.`
-      });
-    }
-
-    account.balanceCents -= product.priceCents;
-
-    const purchaseId = data.nextPurchaseId++;
-
-    data.purchases.push({
-      id: purchaseId,
-      customer,
-      productId,
-      itemName: product.name,
-      priceCents: product.priceCents,
-      bartender: "bar388",
-      purchasedAt: Date.now(),
-      refunded: false,
-      refundedAt: null
-    });
-
-    data.ratings.push({
-      id: data.nextRatingId++,
-      purchaseId,
-      customer,
-      itemName: product.name,
-      bartender: "bar388",
-      rating: null,
-      createdAt: Date.now(),
-      ratedAt: null,
-      refunded: false,
-      refundCents: 0
-    });
-
-    saveData();
-
-    return res.json({
-      message: `Bought ${product.name} for ${customer}.`,
-      customer: publicCustomerState(customer)
-    });
-  }
-);
-
-// ======================================================
-// WEBSITE AND HEALTH CHECK
-// ======================================================
-
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "index.html"));
-});
-
-app.get("/health", (req, res) => {
-  res.json({
-    ok: true,
-    service: "Bar Register"
-  });
-});
-
-// ======================================================
-// ERROR HANDLING
-// ======================================================
-
-app.use((err, req, res, next) => {
-  console.error("Request failed:", err);
-
-  if (res.headersSent) {
-    return next(err);
-  }
-
-  if (req.path.startsWith("/api/")) {
-    const status =
-      Number.isInteger(err.status) &&
-      err.status >= 400 &&
-      err.status < 600
-        ? err.status
-        : 500;
-
-    const message = status === 400
-      ? "Invalid request. Please check the submitted data."
-      : "The server could not complete the request. Check the server logs.";
-
-    return res.status(status).json({
-      error: message
-    });
-  }
-
-  return res.status(500).send("Internal server error.");
-});
-
-// ======================================================
-// START SERVER
-// ======================================================
-
-app.listen(PORT, "0.0.0.0", () => {
-  console.log(`Bar register listening on port ${PORT}`);
-});
+})();
+</script>
+
+</body>
+</html>
